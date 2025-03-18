@@ -1,7 +1,13 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'ROSA HCP Workshop'
+<<<<<<< HEAD
 
 [caches]
   [caches.images]
     dir = ':cacheDir/images'
+=======
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
+>>>>>>> 24f785d9fbbba90a7afc8ddf952e118e31069a5d
