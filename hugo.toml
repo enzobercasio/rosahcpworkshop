@@ -1,3 +1,6 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'ROSA HCP Workshop'
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
