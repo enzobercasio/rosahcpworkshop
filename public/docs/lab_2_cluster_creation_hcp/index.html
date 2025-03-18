@@ -1,0 +1,92 @@
+<!doctype html><html lang=en-us dir=ltr><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="
+  Deploy your cluster using a Hosted Control Plane
+  #
+
+In this section we will deploy a ROSA cluster using Hosted Control Plane (HCP).
+In short, with ROSA HCP you can decouple the control plane from the data plane (workers). This is a new deployment model for ROSA in which the control plane is hosted in a Red Hat owned AWS account. Therefore the control plane is no longer hosted in your AWS account thus reducing your AWS infrastructure expenses. The control plane is dedicated to each cluster and is highly available. See the documentation for more about Hosted Control Planes."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="http://localhost:1313/docs/lab_2_cluster_creation_hcp/"><meta property="og:site_name" content="ROSA HCP Workshop"><meta property="og:title" content="Deploy your cluster using a Hosted Control Plane"><meta property="og:description" content="Deploy your cluster using a Hosted Control Plane # In this section we will deploy a ROSA cluster using Hosted Control Plane (HCP).
+In short, with ROSA HCP you can decouple the control plane from the data plane (workers). This is a new deployment model for ROSA in which the control plane is hosted in a Red Hat owned AWS account. Therefore the control plane is no longer hosted in your AWS account thus reducing your AWS infrastructure expenses. The control plane is dedicated to each cluster and is highly available. See the documentation for more about Hosted Control Planes."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="docs"><title>Lab 2 - Create a ROSA HCP Cluster | ROSA HCP Workshop</title>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_2_cluster_creation_hcp/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.184ab0ba1ad480f500e7286e5b89e84a3efeb92b43ce0d91fe93f2e68bd397ec.js integrity="sha256-GEqwuhrUgPUA5yhuW4noSj7+uStDzg2R/pPy5ovTl+w=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>ROSA HCP Workshop</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><a href=/docs/lab_1_explore_rosa/>Lab 1 - Explore the environment</a></li><li><a href=/docs/lab_2_cluster_creation_hcp/ class=active>Lab 2 - Create a ROSA HCP Cluster</a></li><li><a href=/docs/lab_3_access_cluster/>Lab 3 - Access ROSA HCP Cluster</a></li><li><a href=/docs/lab_4_cluster_upgrade/>Lab 4 - Upgrade ROSA HCP Cluster</a></li><li><a href=/docs/lab_5_managing_worker_nodes-copy/>Lab 5 - Managing Worker Nodes</a></li><li><a href=/docs/lab_6_labeling_nodes/>Lab 6 - Labeling Worker Nodes</a></li><li><a href=/docs/lab_7_autoscaling/>Lab 7 - Autoscaling ROSA HCP Cluster</a></li><li><a href=/docs/lab_8_cloudwatch/>Lab 8 - Configure Red Hat OpenShift Logging with AWS Cloudwatch</a></li><li><a href=/docs/lab_9_deploy_app/>Lab 9 - Deploy an application with AWS Database</a></li><li><a href=/docs/lab_10_openshift_gitops/>Lab 10 - Deploy an application with Red Hat OpenShift GitOps</a></li><li><a href=/docs/lab_11_network_policy/>Lab 11 - Secure your applications with Network Policies</a></li><li><a href=/docs/lab_12_resilient_app/>Lab 12 - Make your application resilient</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>Lab 2 - Create a ROSA HCP Cluster</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#deploy-your-cluster-using-a-hosted-control-plane>Deploy your cluster using a Hosted Control Plane</a></li><li><a href=#prerequisites>Prerequisites</a><ul><li></li></ul></li><li><a href=#create-the-cluster>Create the Cluster</a></li><li><a href=#check-installation-status>Check installation status</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=deploy-your-cluster-using-a-hosted-control-plane>Deploy your cluster using a Hosted Control Plane
+<a class=anchor href=#deploy-your-cluster-using-a-hosted-control-plane>#</a></h2><p>In this section we will deploy a ROSA cluster using Hosted Control Plane (HCP).</p><p>In short, with ROSA HCP you can decouple the control plane from the data plane (workers). This is a new deployment model for ROSA in which the control plane is hosted in a Red Hat owned AWS account. Therefore the control plane is no longer hosted in your AWS account thus reducing your AWS infrastructure expenses. The control plane is dedicated to each cluster and is highly available. See the documentation for more about <a href=https://docs.openshift.com/container-platform/4.15/architecture/control-plane.html#hosted-control-planes-overview_control-plane>Hosted Control Planes</a>.</p><h2 id=prerequisites>Prerequisites
+<a class=anchor href=#prerequisites>#</a></h2><p>ROSA HCP requires a few things to be created before deploying the cluster:</p><ol><li><p>ELB service role</p></li><li><p>VPC - This is a &ldquo;bring-your-own VPC&rdquo; model (also referred to as BYO-VPC)</p></li><li><p>OIDC configuration (and an OIDC provider with that specific configuration)</p></li></ol><p>Let’s create those first.</p><h4 id=ensure-elb-service-role-exists>Ensure ELB service role exists
+<a class=anchor href=#ensure-elb-service-role-exists>#</a></h4><p>Run the following to check for the role and create it if it is missing.</p><pre><code>    aws iam get-role --role-name &quot;AWSServiceRoleForElasticLoadBalancing&quot; || aws iam create-service-linked-role --aws-service-name &quot;elasticloadbalancing.amazonaws.com&quot;
+</code></pre><h4 id=vpc>VPC
+<a class=anchor href=#vpc>#</a></h4><ol><li><p>Set a few environment variables for your networking configuration:</p><pre><code>  export VPC_CIDR=10.0.0.0/16
+  export PUBLIC_CIDR_SUBNET=10.0.1.0/24
+  export PRIVATE_CIDR_SUBNET=10.0.0.0/24
+  export CLUSTER_NAME=rosa-${GUID}
+</code></pre><p>and save them in your .bashrc</p><pre><code>  echo &quot;export VPC_CIDR=$VPC_CIDR&quot; &gt;&gt;$HOME/.bashrc
+  echo &quot;export PUBLIC_CIDR_SUBNET=$PUBLIC_CIDR_SUBNET&quot; &gt;&gt;$HOME/.bashrc
+  echo &quot;export PRIVATE_CIDR_SUBNET=$PRIVATE_CIDR_SUBNET&quot; &gt;&gt;$HOME/.bashrc
+  echo &quot;export CLUSTER_NAME=$CLUSTER_NAME&quot; &gt;&gt;$HOME/.bashrc
+</code></pre></li><li><p>Create the VPC</p><pre><code>   export VPC_ID=$(aws ec2 create-vpc --cidr-block $VPC_CIDR --query Vpc.VpcId --output text)
+
+   echo &quot;export VPC_ID=$VPC_ID&quot; &gt;&gt;$HOME/.bashrc
+</code></pre></li><li><p>Create Tags</p><pre><code>   aws ec2 create-tags --resources $VPC_ID --tags Key=Name,Value=$CLUSTER_NAME
+</code></pre></li><li><p>Enable DNS Hostname</p><pre><code>   aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames
+</code></pre></li><li><p>Now you can create the public subnet and add tags</p><pre><code>   export PUBLIC_SUBNET_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block $PUBLIC_CIDR_SUBNET --query Subnet.SubnetId --output text)
+
+   echo &quot;export PUBLIC_SUBNET_ID=$PUBLIC_SUBNET_ID&quot; &gt;&gt;$HOME/.bashrc
+
+   aws ec2 create-tags --resources $PUBLIC_SUBNET_ID --tags Key=Name,Value=$CLUSTER_NAME-public
+</code></pre></li><li><p>Create the private subnet and add tags</p><pre><code>   export PRIVATE_SUBNET_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block $PRIVATE_CIDR_SUBNET --query Subnet.SubnetId --output text)
+
+   echo &quot;export PRIVATE_SUBNET_ID=$PRIVATE_SUBNET_ID&quot; &gt;&gt;$HOME/.bashrc
+
+   aws ec2 create-tags --resources $PRIVATE_SUBNET_ID --tags Key=Name,Value=$CLUSTER_NAME-private
+</code></pre></li><li><p>Create an internet gateway for outbound traffic and attach it to the VPC</p><pre><code>   export IGW_ID=$(aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId --output text)
+
+   echo &quot;export IGW_ID=$IGW_ID&quot; &gt;&gt;$HOME/.bashrc
+
+   aws ec2 create-tags --resources $IGW_ID --tags Key=Name,Value=$CLUSTER_NAME
+
+   aws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW_ID
+</code></pre></li><li><p>Create a route table for outbound traffic and associate it to the public subnet.</p><pre><code>   export PUBLIC_ROUTE_TABLE_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --query RouteTable.RouteTableId --output text)
+
+   echo &quot;export PUBLIC_ROUTE_TABLE_ID=$PUBLIC_ROUTE_TABLE_ID&quot; &gt;&gt;$HOME/.bashrc
+
+   aws ec2 create-tags --resources $PUBLIC_ROUTE_TABLE_ID --tags Key=Name,Value=$CLUSTER_NAME
+
+   aws ec2 create-route --route-table-id $PUBLIC_ROUTE_TABLE_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID
+
+   aws ec2 associate-route-table --subnet-id $PUBLIC_SUBNET_ID --route-table-id $PUBLIC_ROUTE_TABLE_ID
+</code></pre></li><li><p>Create a NAT gateway in the public subnet for outgoing traffic from the private network.</p><pre><code>   export NAT_IP_ADDRESS=$(aws ec2 allocate-address --domain vpc --query AllocationId --output text)
+
+   echo &quot;export NAT_IP_ADDRESS=$NAT_IP_ADDRESS&quot; &gt;&gt;$HOME/.bashrc
+
+   export NAT_GATEWAY_ID=$(aws ec2 create-nat-gateway --subnet-id $PUBLIC_SUBNET_ID --allocation-id $NAT_IP_ADDRESS --query NatGateway.NatGatewayId --output text)
+
+   echo &quot;export NAT_GATEWAY_ID=$NAT_GATEWAY_ID&quot; &gt;&gt;$HOME/.bashrc
+
+   aws ec2 create-tags --resources $NAT_IP_ADDRESS --resources $NAT_GATEWAY_ID --tags Key=Name,Value=$CLUSTER_NAME
+</code></pre></li><li><p>Wait 10 seconds for the NAT gateway to be ready then create a route table for the private subnet to the NAT gateway.</p><pre><code>  sleep 10
+
+  export PRIVATE_ROUTE_TABLE_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --query RouteTable.RouteTableId --output text)
+
+  echo &quot;export PRIVATE_ROUTE_TABLE_ID=$PRIVATE_ROUTE_TABLE_ID&quot; &gt;&gt;$HOME/.bashrc
+
+  aws ec2 create-tags --resources $PRIVATE_ROUTE_TABLE_ID $NAT_IP_ADDRESS --tags Key=Name,Value=$CLUSTER_NAME-private
+
+  aws ec2 create-route --route-table-id $PRIVATE_ROUTE_TABLE_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $NAT_GATEWAY_ID
+
+  aws ec2 associate-route-table --subnet-id $PRIVATE_SUBNET_ID --route-table-id $PRIVATE_ROUTE_TABLE_ID
+</code></pre><p>See the <a href=https://docs.openshift.com/rosa/rosa_planning/rosa-sts-aws-prereqs.html#rosa-vpc_rosa-sts-aws-prereqs>documentation</a> for more about VPC requirements.</p></li><li><p>Confirm that the environment variables that you need to create the cluster are, in fact, set.</p><pre><code>echo &quot;Public Subnet: $PUBLIC_SUBNET_ID&quot;; echo &quot;Private Subnet: $PRIVATE_SUBNET_ID&quot;
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>Public Subnet: subnet-0faeeeb0000000000
+</span></span><span style=display:flex><span>Private Subnet: subnet-011fe340000000000
+</span></span></code></pre></div><p>Warning: If one or both are blank, do not proceed and ask for assistance.</p></li></ol><h4 id=oidc-configuration>OIDC Configuration
+<a class=anchor href=#oidc-configuration>#</a></h4><p>To create the OIDC configuration to be used for your cluster in this workshop, run the following command. We are opting for the automatic creation mode and Red Hat managed, as this is simpler for the workshop purposes. We are going to store the generated OIDC ID to an environment variable for later use. Notice that the following command uses the ROSA CLI to create your cluster’s unique OIDC configuration.</p><pre><code>  export OIDC_ID=$(rosa create oidc-config --mode auto --managed --yes -o json | jq -r '.id'); echo $OIDC_ID;
+
+  echo &quot;export OIDC_ID=$OIDC_ID&quot; &gt;&gt;$HOME/.bashrc
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>23o3doeo86adgqhci4jl000000000000
+</span></span></code></pre></div><h2 id=create-the-cluster>Create the Cluster
+<a class=anchor href=#create-the-cluster>#</a></h2><p>As this is the first time you are deploying ROSA in this account and have not yet created the account roles, create the account-wide roles with policies, and Operator roles with policies. Since ROSA makes use of AWS Security Token Service (STS), this step creates the AWS IAM roles and policies that are needed for ROSA to interact within your account. See <a href=https://docs.openshift.com/rosa/rosa_architecture/rosa-sts-about-iam-resources.html#rosa-sts-account-wide-roles-and-policies_rosa-sts-about-iam-resources>Account-wide IAM role and policy reference</a> for more details if you are interested.</p><ol><li><p>Run the following command to create the account-wide roles</p><pre><code>   rosa create account-roles --mode auto --yes
+</code></pre></li><li><p>Run the following command to create the cluster</p><pre><code>   rosa create cluster --cluster-name rosa-${GUID} \
+     --subnet-ids ${PUBLIC_SUBNET_ID},${PRIVATE_SUBNET_ID} \
+     --hosted-cp \
+     --version 4.15.34 \
+     --oidc-config-id $OIDC_ID \
+     --sts --mode auto --yes
+</code></pre><p>In about 10 minutes the control plane and API will be up, and about 5-10 minutes after, the worker nodes will be up and the cluster will be completely usable. This cluster will have a control plane across three AWS availability zones in your selected region, in a Red Hat AWS account and will also create 2 worker nodes in your AWS account.</p></li></ol><h2 id=check-installation-status>Check installation status
+<a class=anchor href=#check-installation-status>#</a></h2><ol><li><p>You can run the following command to check the detailed status of the cluster</p><pre><code>   rosa describe cluster --cluster rosa-${GUID}
+</code></pre><p>or, you can also watch the logs as it progresses</p><pre><code>   rosa logs install --cluster rosa-${GUID} --watch
+</code></pre></li><li><p>Once the state changes to “ready” your cluster is now installed. It may take a few more minutes for the worker nodes to come online. In total this should take about 15 minutes.</p></li></ol><p>You can continue this lab - there is a step in the next section where you will need to wait for the cluster operators to finish rolling out - but there is no need to wait at this point.</p></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#deploy-your-cluster-using-a-hosted-control-plane>Deploy your cluster using a Hosted Control Plane</a></li><li><a href=#prerequisites>Prerequisites</a><ul><li></li></ul></li><li><a href=#create-the-cluster>Create the Cluster</a></li><li><a href=#check-installation-status>Check installation status</a></li></ul></nav></div></aside></main></body></html>

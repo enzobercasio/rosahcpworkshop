@@ -1,0 +1,91 @@
+<!doctype html><html lang=en-us dir=ltr><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="
+  Introduction
+  #
+
+Red Hat® OpenShift® GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.
+OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.
+There’s no single tool that converts a development pipeline to &ldquo;DevOps&rdquo;. By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="http://localhost:1313/docs/lab_10_openshift_gitops/"><meta property="og:site_name" content="ROSA HCP Workshop"><meta property="og:title" content="Deploy an application with Red Hat OpenShift GitOps"><meta property="og:description" content="Introduction # Red Hat® OpenShift® GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.
+OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.
+There’s no single tool that converts a development pipeline to “DevOps”. By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="docs"><title>Lab 10 - Deploy an application with Red Hat OpenShift GitOps | ROSA HCP Workshop</title>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_10_openshift_gitops/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.184ab0ba1ad480f500e7286e5b89e84a3efeb92b43ce0d91fe93f2e68bd397ec.js integrity="sha256-GEqwuhrUgPUA5yhuW4noSj7+uStDzg2R/pPy5ovTl+w=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>ROSA HCP Workshop</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><a href=/docs/lab_1_explore_rosa/>Lab 1 - Explore the environment</a></li><li><a href=/docs/lab_2_cluster_creation_hcp/>Lab 2 - Create a ROSA HCP Cluster</a></li><li><a href=/docs/lab_3_access_cluster/>Lab 3 - Access ROSA HCP Cluster</a></li><li><a href=/docs/lab_4_cluster_upgrade/>Lab 4 - Upgrade ROSA HCP Cluster</a></li><li><a href=/docs/lab_5_managing_worker_nodes-copy/>Lab 5 - Managing Worker Nodes</a></li><li><a href=/docs/lab_6_labeling_nodes/>Lab 6 - Labeling Worker Nodes</a></li><li><a href=/docs/lab_7_autoscaling/>Lab 7 - Autoscaling ROSA HCP Cluster</a></li><li><a href=/docs/lab_8_cloudwatch/>Lab 8 - Configure Red Hat OpenShift Logging with AWS Cloudwatch</a></li><li><a href=/docs/lab_9_deploy_app/>Lab 9 - Deploy an application with AWS Database</a></li><li><a href=/docs/lab_10_openshift_gitops/ class=active>Lab 10 - Deploy an application with Red Hat OpenShift GitOps</a></li><li><a href=/docs/lab_11_network_policy/>Lab 11 - Secure your applications with Network Policies</a></li><li><a href=/docs/lab_12_resilient_app/>Lab 12 - Make your application resilient</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>Lab 10 - Deploy an application with Red Hat OpenShift GitOps</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#create-an-amazon-dynamodb-instance>Create an Amazon DynamoDB Instance</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=introduction>Introduction
+<a class=anchor href=#introduction>#</a></h2><p>Red Hat® OpenShift® GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.</p><p>OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.</p><p>There’s no single tool that converts a development pipeline to &ldquo;DevOps&rdquo;. By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD.</p><p>OpenShift GitOps takes advantage of <a href=https://argoproj.github.io/cd>Argo CD</a> and integrates it into Red Hat OpenShift to deliver a consistent, fully supported, declarative Kubernetes platform to configure and use with GitOps principles.</p><p>OpenShift and OpenShift GitOps:</p><ul><li><p>Apply consistency across cluster and deployment lifecycles</p></li><li><p>Consolidate administration and management of applications across on-premises and cloud environments</p></li><li><p>Check the state of clusters making application constraints known early</p></li><li><p>Rollback code changes across clusters</p></li><li><p>Roll out new changes submitted via Git</p></li></ul><h2 id=create-an-amazon-dynamodb-instance>Create an Amazon DynamoDB Instance
+<a class=anchor href=#create-an-amazon-dynamodb-instance>#</a></h2><ol><li>From the OpenShift Console Administrator view click through HOME -> Operators -> Operator Hub, search for &ldquo;openshift gitops&rdquo; and click Install.</li></ol><p>For the update channel select gitops-1.11. Leave all other defaults and click Install.</p><ol start=2><li><p>Wait until the operator shows as successfully installed (Installed operator - ready for use).</p></li><li><p>In your bastion VM create a new project</p><pre><code> oc new-project bgd
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>Now using project &#34;bgd&#34; on server &#34;https://api.rosa-6n4s8.1c1c.p1.openshiftapps.com:6443&#34;.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>You can add applications to this project with the &#39;new-app&#39; command. For example, try:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    oc new-app rails-postgresql-example
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
+</span></span></code></pre></div></li><li><p>Deploy ArgoCD into your project</p><pre><code>     cat &lt;&lt;EOF | oc apply -f -
+     ---
+     apiVersion: argoproj.io/v1beta1
+     kind: ArgoCD
+     metadata:
+     name: argocd
+     namespace: bgd
+     spec:
+     sso:
+         dex:
+         openShiftOAuth: true
+         resources:
+             limits:
+             cpu: 500m
+             memory: 256Mi
+             requests:
+             cpu: 250m
+             memory: 128Mi
+         provider: dex
+     rbac:
+         defaultPolicy: &quot;role:readonly&quot;
+         policy: &quot;g, system:authenticated, role:admin&quot;
+         scopes: &quot;[groups]&quot;
+     server:
+         insecure: true
+         route:
+         enabled: true
+         tls:
+             insecureEdgeTerminationPolicy: Redirect
+             termination: edge
+     EOF
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>argocd.argoproj.io/argocd created
+</span></span></code></pre></div></li><li><p>Wait for ArgoCD to be ready</p><pre><code> oc rollout status deploy/argocd-server -n bgd
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>deployment &#34;argocd-server&#34; successfully rolled out
+</span></span></code></pre></div></li><li><p>Apply the GitOps application for your application</p><pre><code> cat &lt;&lt;EOF | oc apply -f -
+ ---
+ apiVersion: argoproj.io/v1alpha1
+ kind: Application
+ metadata:
+ name: bgd-app
+ namespace: bgd
+ spec:
+ destination:
+     namespace: bgd
+     server: https://kubernetes.default.svc
+ project: default
+ source:
+     path: apps/bgd/base
+     repoURL: https://github.com/rh-mobb/gitops-bgd-app
+     targetRevision: main
+ syncPolicy:
+     automated:
+     prune: true
+     selfHeal: false
+     syncOptions:
+     - CreateNamespace=false
+ EOF
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>application.argoproj.io/bgd-app created
+</span></span></code></pre></div></li><li><p>Find the URL for your Argo CD dashboard, copy it to your web browser and log in using your OpenShift credentials (remind yourself what your password for user admin is by typing echo <code>$COGNITO_ADMIN_PASSWORD - {ssh_password}-2@23</code> if you accepted the default)</p><pre><code> oc get route argocd-server -n bgd -o jsonpath='{.spec.host}{&quot;\n&quot;}'
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>argocd-server-bgd.apps.rosa-6n4s8.1c1c.p1.openshiftapps.com
+</span></span></code></pre></div></li><li><p>Click on the Application to show its topology</p></li><li><p>Verify that OpenShift sees the Deployment as rolled out</p><pre><code> oc rollout status deploy/bgd
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>deployment &#34;bgd&#34; successfully rolled out
+</span></span></code></pre></div></li><li><p>Get the route and browse to it in your browser</p><pre><code>oc get route bgd -n bgd -o jsonpath='{.spec.host}{&quot;\n&quot;}'
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>bgd-bgd.apps.rosa-6n4s8.1c1c.p1.openshiftapps.com
+</span></span></code></pre></div></li><li><p>You should see a green box in the website</p></li><li><p>Patch the OpenShift resource to force it to be out of sync with the github repository. To do this we’re going to turn the tile blue by changing the deployed code directly. This means the value set in the deployed code (&ldquo;blue&rdquo;) and the value in the repo (&ldquo;green&rdquo;) are now different</p><pre><code>oc -n bgd patch deploy/bgd --type='json' \
+    -p='[{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;:
+    &quot;/spec/template/spec/containers/0/env/0/value&quot;, &quot;value&quot;:&quot;blue&quot;}]'
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>deployment.apps/bgd patched
+</span></span></code></pre></div></li><li><p>Refresh Your browser and you should see a blue box in the website</p></li><li><p>Meanwhile check ArgoCD it should show the application as out of sync. Click the Sync button and then click on Synchronize to have it revert the change you made directly to the code deployed in OpenShift</p></li><li><p>Check again, you should see a green box in the website</p></li></ol><p>Congratulations! You have successfully deployed OpenShift Gitops</p></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#create-an-amazon-dynamodb-instance>Create an Amazon DynamoDB Instance</a></li></ul></nav></div></aside></main></body></html>

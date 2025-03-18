@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://example.org/docs/lab_1_explore_rosa/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_2_cluster_creation_hcp/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_3_access_cluster/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_4_cluster_upgrade/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_5_managing_worker_nodes-copy/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_6_labeling_nodes/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_7_autoscaling/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_8_cloudwatch/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_9_deploy_app/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_10_openshift_gitops/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_11_network_policy/</loc>
+  </url><url>
+    <loc>https://example.org/docs/lab_12_resilient_app/</loc>
+  </url><url>
+    <loc>https://example.org/categories/</loc>
+  </url><url>
+    <loc>https://example.org/docs/</loc>
+  </url><url>
+    <loc>https://example.org/</loc>
+  </url><url>
+    <loc>https://example.org/tags/</loc>
+  </url>
+</urlset>
