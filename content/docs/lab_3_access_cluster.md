@@ -42,7 +42,7 @@ For production deployments, however, the recommended approach is to use an exter
 
 3. Copy the login command returned to you in the previous step and paste that into your terminal. This should log you into the cluster via the CLI so you can start using the cluster (answer `y` when prompted if you want to accept the certificate).
 
-        oc login https://api.rosa-4fgbq.qrdf.p1.openshiftapps.com:6443 --username cluster-admin --password [clusteradminpassword]
+        oc login https://api.rosa-4fgbq.qrdf.p1.openshiftapps.com:6443 --username cluster-admin --password $ADMIN_PASSWORD
 
    Sample Output
    ```tpl

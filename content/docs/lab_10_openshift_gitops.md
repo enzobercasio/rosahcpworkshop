@@ -29,7 +29,7 @@ OpenShift and OpenShift GitOps:
 
 ## Create an Amazon DynamoDB Instance
 
-1. From the OpenShift Console Administrator view click through HOME -> Operators -> Operator Hub, search for "openshift gitops" and click Install.
+1. From the OpenShift Console Administrator view click through HOME -> Operators -> Operator Hub, search for "Red Hat Openshift GitOps" and click Install.
 
 For the update channel select gitops-1.11. Leave all other defaults and click Install.
 
@@ -53,37 +53,36 @@ For the update channel select gitops-1.11. Leave all other defaults and click In
     ```
 4. Deploy ArgoCD into your project
 
-            cat <<EOF | oc apply -f -
-            ---
-            apiVersion: argoproj.io/v1beta1
-            kind: ArgoCD
-            metadata:
-            name: argocd
-            namespace: bgd
-            spec:
-            sso:
-                dex:
-                openShiftOAuth: true
-                resources:
-                    limits:
-                    cpu: 500m
-                    memory: 256Mi
-                    requests:
-                    cpu: 250m
-                    memory: 128Mi
-                provider: dex
-            rbac:
-                defaultPolicy: "role:readonly"
-                policy: "g, system:authenticated, role:admin"
-                scopes: "[groups]"
-            server:
-                insecure: true
-                route:
-                enabled: true
-                tls:
-                    insecureEdgeTerminationPolicy: Redirect
-                    termination: edge
-            EOF
+       cat <<EOF | oc apply -f -
+       apiVersion: argoproj.io/v1alpha1
+       kind: ArgoCD
+       metadata:
+         name: argocd
+       spec:
+         sso:
+           dex:
+             openShiftOAuth: true
+             resources:
+               limits:
+                 cpu: 500m
+                 memory: 256Mi
+               requests:
+                 cpu: 250m
+                 memory: 128Mi
+           provider: dex
+         rbac:
+           defaultPolicy: "role:readonly"
+           policy: "g, system:authenticated, role:admin"
+           scopes: "[groups]"
+         server:
+           insecure: true
+           route:
+             enabled: true
+             tls:
+               insecureEdgeTerminationPolicy: Redirect
+               termination: edge
+       EOF
+
 
     Sample Output
     ```tpl
@@ -99,29 +98,29 @@ For the update channel select gitops-1.11. Leave all other defaults and click In
     ```
 6. Apply the GitOps application for your application
 
-        cat <<EOF | oc apply -f -
-        ---
-        apiVersion: argoproj.io/v1alpha1
-        kind: Application
-        metadata:
-        name: bgd-app
-        namespace: bgd
-        spec:
-        destination:
-            namespace: bgd
-            server: https://kubernetes.default.svc
-        project: default
-        source:
-            path: apps/bgd/base
-            repoURL: https://github.com/rh-mobb/gitops-bgd-app
-            targetRevision: main
-        syncPolicy:
-            automated:
-            prune: true
-            selfHeal: false
-            syncOptions:
-            - CreateNamespace=false
-        EOF
+       cat <<EOF | oc apply -f -
+       apiVersion: argoproj.io/v1alpha1
+       kind: Application
+       metadata:
+         name: bgd-app
+         namespace: bgd
+       spec:
+         destination:
+           namespace: bgd
+           server: https://kubernetes.default.svc
+         project: default
+         source:
+           path: apps/bgd/base
+           repoURL: https://github.com/rh-mobb/gitops-bgd-app
+           targetRevision: main
+         syncPolicy:
+           automated:
+             prune: true
+             selfHeal: false
+           syncOptions:
+           - CreateNamespace=false
+       EOF
+
 
     Sample Output
     ```tpl

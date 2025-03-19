@@ -3,7 +3,7 @@
   #
 
 The ROSA Cluster Autoscaler is a feature that helps automatically adjust the size of an ROSA cluster based on the current workload and resource demands. Cluster Autoscaler offers automatic and intelligent scaling of ROSA clusters, leading to efficient resource utilization, improved application performance, high availability, and simplified cluster management. By dynamically adjusting the cluster size based on workload demands, it helps organizations optimize their infrastructure costs while ensuring optimal application performance and scalability. The cluster autoscaler does not increase the cluster resources beyond the limits that you specify."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="http://localhost:1313/docs/lab_7_autoscaling/"><meta property="og:site_name" content="ROSA HCP Workshop"><meta property="og:title" content="Autoscaling ROSA HCP Cluster"><meta property="og:description" content="Introduction # The ROSA Cluster Autoscaler is a feature that helps automatically adjust the size of an ROSA cluster based on the current workload and resource demands. Cluster Autoscaler offers automatic and intelligent scaling of ROSA clusters, leading to efficient resource utilization, improved application performance, high availability, and simplified cluster management. By dynamically adjusting the cluster size based on workload demands, it helps organizations optimize their infrastructure costs while ensuring optimal application performance and scalability. The cluster autoscaler does not increase the cluster resources beyond the limits that you specify."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="docs"><title>Lab 7 - Autoscaling ROSA HCP Cluster | ROSA HCP Workshop</title>
-<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_7_autoscaling/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.184ab0ba1ad480f500e7286e5b89e84a3efeb92b43ce0d91fe93f2e68bd397ec.js integrity="sha256-GEqwuhrUgPUA5yhuW4noSj7+uStDzg2R/pPy5ovTl+w=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_7_autoscaling/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.9d6983353c9ba2dbaa235877541d229d8bdc7cf37fb00588b3d868a0fc52cbca.js integrity="sha256-nWmDNTybotuqI1h3VB0inYvcfPN/sAWIs9hooPxSy8o=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>ROSA HCP Workshop</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><a href=/docs/lab_1_explore_rosa/>Lab 1 - Explore the environment</a></li><li><a href=/docs/lab_2_cluster_creation_hcp/>Lab 2 - Create a ROSA HCP Cluster</a></li><li><a href=/docs/lab_3_access_cluster/>Lab 3 - Access ROSA HCP Cluster</a></li><li><a href=/docs/lab_4_cluster_upgrade/>Lab 4 - Upgrade ROSA HCP Cluster</a></li><li><a href=/docs/lab_5_managing_worker_nodes-copy/>Lab 5 - Managing Worker Nodes</a></li><li><a href=/docs/lab_6_labeling_nodes/>Lab 6 - Labeling Worker Nodes</a></li><li><a href=/docs/lab_7_autoscaling/ class=active>Lab 7 - Autoscaling ROSA HCP Cluster</a></li><li><a href=/docs/lab_8_cloudwatch/>Lab 8 - Configure Red Hat OpenShift Logging with AWS Cloudwatch</a></li><li><a href=/docs/lab_9_deploy_app/>Lab 9 - Deploy an application with AWS Database</a></li><li><a href=/docs/lab_10_openshift_gitops/>Lab 10 - Deploy an application with Red Hat OpenShift GitOps</a></li><li><a href=/docs/lab_11_network_policy/>Lab 11 - Secure your applications with Network Policies</a></li><li><a href=/docs/lab_12_resilient_app/>Lab 12 - Make your application resilient</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>Lab 7 - Autoscaling ROSA HCP Cluster</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#enable-autoscaling-on-the-default-machinepool>Enable Autoscaling on the Default MachinePool</a></li><li><a href=#test-the-autoscaler>Test the Autoscaler</a></li><li><a href=#summary>Summary</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=introduction>Introduction
 <a class=anchor href=#introduction>#</a></h2><p>The ROSA Cluster Autoscaler is a feature that helps automatically adjust the size of an ROSA cluster based on the current workload and resource demands. Cluster Autoscaler offers automatic and intelligent scaling of ROSA clusters, leading to efficient resource utilization, improved application performance, high availability, and simplified cluster management. By dynamically adjusting the cluster size based on workload demands, it helps organizations optimize their infrastructure costs while ensuring optimal application performance and scalability. The cluster autoscaler does not increase the cluster resources beyond the limits that you specify.</p><h2 id=enable-autoscaling-on-the-default-machinepool>Enable Autoscaling on the Default MachinePool
 <a class=anchor href=#enable-autoscaling-on-the-default-machinepool>#</a></h2><p>You can enable autoscaling on your cluster using either the rosa CLI or the Red Hat OpenShift Cluster Manager. For this lab we will be using the CLI; however, there are instructions at the end of the lab showing how to do it in the console.</p><p>You will need to set up autoscaling for each MachinePool in the cluster separately.</p><ol><li><p>To identify the machine pool IDs in a cluster, enter the following command</p><pre><code>rosa list machinepools --cluster rosa-${GUID}
@@ -11,12 +11,9 @@ The ROSA Cluster Autoscaler is a feature that helps automatically adjust the siz
 </span></span><span style=display:flex><span>worker  No           2         m5.xlarge                          us-east-2a
 </span></span></code></pre></div><p>The ID of the MachinePool that you want to add autoscaling to is worker.</p></li><li><p>To enable autoscaling on a machine pool, enter the following command</p><pre><code>rosa edit machinepool --cluster rosa-${GUID} workers --enable-autoscaling --min-replicas=2 --max-replicas=4
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>I: Updated machine pool &#39;workes&#39; on cluster &#39;rosa-6n4s8&#39;
-</span></span></code></pre></div></li><li><p>Next, let’s check to see that our managed machine autoscalers have been created. To do so, run the following command</p><pre><code> oc -n openshift-machine-api get machineautoscaler
-</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME                                 REF KIND     REF NAME                             MIN   MAX   AGE
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-worker-us-east-2a   MachineSet   rosa-6n4s8-7hbhw-worker-us-east-2a   2     4     4m30s
-</span></span></code></pre></div></li><li><p>And finally, let’s check to see that our cluster autoscaler has been created. To do so, run the following command</p><pre><code> oc get clusterautoscaler
-</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME      AGE
-</span></span><span style=display:flex><span>default   4m55s
+</span></span></code></pre></div></li><li><p>Next, let’s check to see if the autoscaler has been enabled.</p><pre><code> rosa list machinepools -c rosa-${GUID}
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>ID       AUTOSCALING  REPLICAS  INSTANCE TYPE  LABELS    TAINTS    AVAILABILITY ZONE  SUBNET                    DISK SIZE  VERSION  AUTOREPAIR  
+</span></span><span style=display:flex><span>workers  Yes          2/2-4     m5.xlarge                          ap-southeast-1c    subnet-028ffd45ced1aa624  300 GiB    4.15.34  Yes         
 </span></span></code></pre></div></li></ol><h2 id=test-the-autoscaler>Test the Autoscaler
 <a class=anchor href=#test-the-autoscaler>#</a></h2><p>Now let’s test the cluster autoscaler and see it in action. To do so, we’ll deploy a job with a load that this cluster cannot handle. This should force the cluster to scale to handle the load.</p><ol><li><p>First, let’s create a namespace (also known as a project in OpenShift). To do so, run the following command</p><pre><code> oc new-project autoscale-ex
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>Now using project &#34;autoscale-ex&#34; on server &#34;https://api.rosa-6n4s8.1c1c.p1.openshiftapps.com:6443&#34;.
@@ -28,34 +25,33 @@ The ROSA Cluster Autoscaler is a feature that helps automatically adjust the siz
 </span></span><span style=display:flex><span>to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>    kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
-</span></span></code></pre></div></li><li><p>Next, let’s deploy our job that will exhaust the cluster’s resources and cause it to scale more worker nodes. To do so, run the following command</p><pre><code> cat &lt;&lt; EOF | oc apply -f -
- ---
- apiVersion: batch/v1
- kind: Job
- metadata:
-   name: maxscale
-   namespace: autoscale-ex
- spec:
-   template:
-     spec:
-     containers:
-     - name: work
-         image: busybox
-         command: [&quot;sleep&quot;,  &quot;300&quot;]
-         resources:
-         requests:
-             memory: 500Mi
-             cpu: 500m
-         securityContext:
-         allowPrivilegeEscalation: false
-         capabilities:
-             drop:
-             - ALL
-     restartPolicy: Never
- backoffLimit: 4
- completions: 50
- parallelism: 50
- EOF
+</span></span></code></pre></div></li><li><p>Next, let’s deploy our job that will exhaust the cluster’s resources and cause it to scale more worker nodes. To do so, run the following command</p><pre><code>cat &lt;&lt; EOF | oc create -f -
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: maxscale
+  namespace: autoscale-ex
+spec:
+  template:
+    spec:
+      containers:
+      - name: work
+        image: busybox
+        command: [&quot;sleep&quot;,  &quot;300&quot;]
+        resources:
+          requests:
+            memory: 500Mi
+            cpu: 500m
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      restartPolicy: Never
+  backoffLimit: 4
+  completions: 50
+  parallelism: 50
+EOF
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>job.batch/maxscale created
 </span></span></code></pre></div></li><li><p>After a few seconds, run the following to see what pods have been created.</p><pre><code> oc -n autoscale-ex get pods
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME             READY   STATUS    RESTARTS   AGE
@@ -66,16 +62,17 @@ The ROSA Cluster Autoscaler is a feature that helps automatically adjust the siz
 </span></span><span style=display:flex><span>maxscale-5888n   1/1     Running   0          29s
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>[...Output Omitted...]
-</span></span></code></pre></div><p>Notice that we see a lot of pods in a pending state. This should trigger the cluster autoscaler to create more machines using the MachineAutoscaler we created.</p></li><li><p>Let’s check to see if our MachineSet automatically scaled (it may take a few minutes). To do so, run the following command</p><pre><code> oc -n openshift-machine-api get machinesets
-</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME                                 DESIRED   CURRENT   READY   AVAILABLE   AGE
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-infra-us-east-2a    2         2         2       2           23h
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-worker-us-east-2a   4         4         2       2           23h
-</span></span></code></pre></div><p>This shows that the cluster autoscaler is working on scaling multiple MachineSets up to 4.</p></li><li><p>Now let’s watch the cluster autoscaler create and delete machines as necessary (it may take several minutes for machines to appear in the Running state). To do so, run the following command</p><pre><code> watch oc -n openshift-machine-api get machines -l machine.openshift.io/cluster-api-machine-role=worker
-</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME                                       PHASE         TYPE        REGION	 ZONE         AGE
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-worker-us-east-2a-vpfqr   Provisioned   m5.xlarge   us-east-2   us-east-2a   99s
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-worker-us-east-2a-wwmj7   Provisioned   m5.xlarge   us-east-2   us-east-2a   99s
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-worker-us-east-2a-xc8g2   Running	 m5.xlarge   us-east-2   us-east-2a   23h
-</span></span><span style=display:flex><span>rosa-6n4s8-7hbhw-worker-us-east-2a-zxm8j   Running	 m5.xlarge   us-east-2   us-east-2a   23h
+</span></span></code></pre></div><p>Notice that we see a lot of pods in a pending state. This should trigger the cluster autoscaler to create more machines using the MachineAutoscaler we created.</p></li><li><p>Let’s check to see if our MachinePool automatically scaled (it may take a few minutes). To do so, run the following command</p><pre><code> rosa list machinepools -c rosa-${GUID}  
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>ID       AUTOSCALING  REPLICAS  INSTANCE TYPE  LABELS    TAINTS    AVAILABILITY ZONE  SUBNET                    DISK SIZE  VERSION  AUTOREPAIR  
+</span></span><span style=display:flex><span>workers  Yes          4/2-4     m5.xlarge                          ap-southeast-1c    subnet-028ffd45ced1aa624  300 GiB    4.15.34  Yes         
+</span></span></code></pre></div><p>This shows that the cluster autoscaler is working on scaling multiple MachineSets up to 4.</p></li><li><p>Now let’s watch the cluster autoscaler create and delete nodes as necessary (it may take several minutes for machines to appear in the Running state). To do so, run the following command</p><pre><code> oc get nodes -w
+</code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME                                            STATUS   ROLES    AGE     VERSION
+</span></span><span style=display:flex><span>ip-10-0-0-142.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
+</span></span><span style=display:flex><span>ip-10-0-0-155.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
+</span></span><span style=display:flex><span>ip-10-0-0-40.ap-southeast-1.compute.internal    Ready    worker   6m35s   v1.28.13+2ca1a23
+</span></span><span style=display:flex><span>ip-10-0-0-74.ap-southeast-1.compute.internal    Ready    worker   6m25s   v1.28.13+2ca1a23
+</span></span><span style=display:flex><span>ip-10-0-0-155.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
+</span></span><span style=display:flex><span>ip-10-0-0-142.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
 </span></span></code></pre></div><p>Tip: Watch will refresh the output of a command every second. Hit CTRL and c on your keyboard to exit the watch command when you’re ready to move on to the next part of the workshop.</p></li><li><p>Once the machines are running stop the watch and re-run the command to display the pods for the job. You should see that more pods are now running. If you still see some pods in Pending state that is normal because even 4 worker nodes may not be enough to handle the node - but you limited the autoscaler to 4 worker nodes.</p><pre><code> oc -n autoscale-ex get pods
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>NAME             READY   STATUS              RESTARTS   AGE
 </span></span><span style=display:flex><span>maxscale-2c6zt   0/1     Completed           0          5m18s
@@ -88,5 +85,7 @@ The ROSA Cluster Autoscaler is a feature that helps automatically adjust the siz
 </span></span><span style=display:flex><span>maxscale-5p2n8   0/1     ContainerCreating   0          5m18s
 </span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>[...Output omitted...]  
-</span></span></code></pre></div></li></ol><p>Congratulations! You’ve successfully demonstrated cluster autoscaling.</p><h2 id=summary>Summary
+</span></span></code></pre></div></li></ol><p>Congratulations! You’ve successfully demonstrated cluster autoscaling.</p><ol start=7><li><p>Delete the autoscaling project</p><pre><code> oc delete project autoscale-ex
+</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>project.project.openshift.io &#34;autoscale-ex&#34; deleted
+</span></span></code></pre></div></li></ol><h2 id=summary>Summary
 <a class=anchor href=#summary>#</a></h2><p>Here you learned:</p><ul><li><p>Enable autoscaling on the default Machine Pool for your cluster</p></li><li><p>Deploy an application on the cluster and watch the cluster autoscaler scale your cluster to support the increased workload</p></li></ul></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#enable-autoscaling-on-the-default-machinepool>Enable Autoscaling on the Default MachinePool</a></li><li><a href=#test-the-autoscaler>Test the Autoscaler</a></li><li><a href=#summary>Summary</a></li></ul></nav></div></aside></main></body></html>

@@ -17,22 +17,24 @@ For this module we will be applying networkpolices to the previously created 'mi
 
 2. Create a new application within this namespace
 
-         cat << EOF | oc apply -f -
-        apiVersion: v1
-        kind: Pod
-        metadata:
-        name: networkpolicy-pod
-        namespace: networkpolicy-test
-        labels:
-            app: networkpolicy
-        spec:
-        securityContext:
-            allowPrivilegeEscalation: false
-        containers:
-            - name: networkpolicy-pod
-            image: registry.access.redhat.com/ubi9/ubi-minimal
-            command: ["sleep", "infinity"]
-        EOF
+       cat << EOF | oc apply -f -
+       apiVersion: v1
+       kind: Pod
+       metadata:
+         name: networkpolicy-pod
+         namespace: networkpolicy-test
+       labels:
+         app: networkpolicy
+       spec:
+         securityContext:
+           allowPrivilegeEscalation: false
+         containers:
+           - name: networkpolicy-pod
+             image: registry.access.redhat.com/ubi9/ubi-minimal
+             command:
+               - sleep
+               - infinity
+       EOF
 
 3. Now we will change to the microsweeper-ex project to start applying the network policies
 
@@ -40,10 +42,10 @@ For this module we will be applying networkpolices to the previously created 'mi
 
 4. Fetch the IP address of the `microsweeper` Pod
 
-        MS_IP=$(oc -n microsweeper-ex get pod -l \
-            "app.kubernetes.io/name=microsweeper-appservice" \
-            -o jsonpath="{.items[0].status.podIP}")
-        echo $MS_IP
+       MS_IP=$(oc -n microsweeper-ex get pod -l \
+           "app.kubernetes.io/name=microsweeper-appservice" \
+           -o jsonpath="{.items[0].status.podIP}")
+       echo $MS_IP
 
     Sample Output
     ```tpl
@@ -70,22 +72,22 @@ For this module we will be applying networkpolices to the previously created 'mi
 
     This Network Policy will restrict Ingress to the Pods in the project `microsweeper-ex` to just the OpenShift Ingress Pods and only on port 8080.
 
-        cat << EOF | oc apply -f -
-        ---
-        apiVersion: networking.k8s.io/v1
-        kind: NetworkPolicy
-        metadata:
-        name: allow-from-openshift-ingress
-        namespace: microsweeper-ex
-        spec:
-        ingress:
-        - from:
-            - namespaceSelector:
-                matchLabels:
-                network.openshift.io/policy-group: ingress
-        podSelector: {}
-        policyTypes:
-        - Ingress
+       cat << EOF | oc apply -f -
+       ---
+       apiVersion: networking.k8s.io/v1
+       kind: NetworkPolicy
+       metadata:
+         name: allow-from-openshift-ingress
+         namespace: microsweeper-ex
+       spec:
+         ingress:
+         - from:
+          - namespaceSelector:
+               matchLabels:
+               network.openshift.io/policy-group: ingress
+            podSelector: {}
+               policyTypes:
+         - Ingress
         EOF
 
     Sample Output

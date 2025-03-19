@@ -20,15 +20,8 @@ While you can directly add a label to a node, it is not recommended because node
     ```tpl
     I: Updated machine pool 'workshop' on cluster 'rosa-6n4s8'
     ```
+
 2. Now, let’s verify the nodes are properly labeled. To do so, run the following command
-
-       oc get nodes --selector='tier=frontend' -o name
-
-   Sample Output
-   ```tpl
-   I: Updated machine pool 'workshop' on cluster 'rosa-6n4s8'
-   ```
-3. Now, let’s verify the nodes are properly labeled. To do so, run the following command
 
         oc get nodes --selector='tier=frontend' -o name
 
@@ -62,39 +55,38 @@ Now that we’ve successfully labeled our nodes, let’s deploy a workload to de
 
 2. Next, let’s deploy our application and associated resources that will target our labeled nodes. To do so, run the following command:
 
-        cat << EOF | oc apply -f -
-        ---
-        kind: Deployment
-        apiVersion: apps/v1
-        metadata:
-        name: nodeselector-app
-        namespace: nodeselector-ex
-        spec:
-        replicas: 1
-        selector:
-            matchLabels:
-            app: nodeselector-app
-        template:
-            metadata:
-            labels:
-                app: nodeselector-app
-            spec:
-            nodeSelector:
-                tier: frontend
-            containers:
-            - name: hello-openshift
-                image: "docker.io/openshift/hello-openshift"
-                ports:
-                - containerPort: 8080
-                protocol: TCP
-                - containerPort: 8888
-                protocol: TCP
-                securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                    drop:
-                    - ALL
-        EOF
+       cat << EOF | oc apply -f -
+       kind: Deployment
+       apiVersion: apps/v1
+       metadata:
+         name: nodeselector-app
+         namespace: nodeselector-ex
+       spec:
+         replicas: 1
+         selector:
+           matchLabels:
+             app: nodeselector-app
+         template:
+           metadata:
+             labels:
+               app: nodeselector-app
+           spec:
+             nodeSelector:
+               tier: frontend
+             containers:
+               - name: hello-openshift
+                 image: "docker.io/openshift/hello-openshift"
+                 ports:
+                   - containerPort: 8080
+                     protocol: TCP
+                   - containerPort: 8888
+                     protocol: TCP
+                 securityContext:
+                   allowPrivilegeEscalation: false
+                   capabilities:
+                     drop:
+                       - ALL
+       EOF
 
     Sample Output
     ```tpl

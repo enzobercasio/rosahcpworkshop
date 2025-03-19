@@ -5,7 +5,7 @@
 It’s time for us to put our cluster to work and deploy a workload! We’re going to build an example Java application, microsweeper, using Quarkus (a Kubernetes-native Java stack) and Amazon DynamoDB. We’ll then deploy the application to our ROSA cluster and connect to the database over AWS’s secure network.
 This lab demonstrates how ROSA (an AWS native service) can easily and securely access and utilize other AWS native services using AWS Secure Token Service (STS). To achieve this, we will be using AWS IAM, Amazon DynamoDB, and a service account within OpenShift. After configuring the latter, we will use both Quarkus - a Kubernetes-native Java framework optimized for containers - and Source-to-Image (S2I) - a toolkit for building container images from source code - to deploy the microsweeper application."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="http://localhost:1313/docs/lab_9_deploy_app/"><meta property="og:site_name" content="ROSA HCP Workshop"><meta property="og:title" content="Deploy an application with AWS Database"><meta property="og:description" content="Introduction # It’s time for us to put our cluster to work and deploy a workload! We’re going to build an example Java application, microsweeper, using Quarkus (a Kubernetes-native Java stack) and Amazon DynamoDB. We’ll then deploy the application to our ROSA cluster and connect to the database over AWS’s secure network.
 This lab demonstrates how ROSA (an AWS native service) can easily and securely access and utilize other AWS native services using AWS Secure Token Service (STS). To achieve this, we will be using AWS IAM, Amazon DynamoDB, and a service account within OpenShift. After configuring the latter, we will use both Quarkus - a Kubernetes-native Java framework optimized for containers - and Source-to-Image (S2I) - a toolkit for building container images from source code - to deploy the microsweeper application."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="docs"><title>Lab 9 - Deploy an application with AWS Database | ROSA HCP Workshop</title>
-<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_9_deploy_app/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.184ab0ba1ad480f500e7286e5b89e84a3efeb92b43ce0d91fe93f2e68bd397ec.js integrity="sha256-GEqwuhrUgPUA5yhuW4noSj7+uStDzg2R/pPy5ovTl+w=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_9_deploy_app/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.9d6983353c9ba2dbaa235877541d229d8bdc7cf37fb00588b3d868a0fc52cbca.js integrity="sha256-nWmDNTybotuqI1h3VB0inYvcfPN/sAWIs9hooPxSy8o=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>ROSA HCP Workshop</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><a href=/docs/lab_1_explore_rosa/>Lab 1 - Explore the environment</a></li><li><a href=/docs/lab_2_cluster_creation_hcp/>Lab 2 - Create a ROSA HCP Cluster</a></li><li><a href=/docs/lab_3_access_cluster/>Lab 3 - Access ROSA HCP Cluster</a></li><li><a href=/docs/lab_4_cluster_upgrade/>Lab 4 - Upgrade ROSA HCP Cluster</a></li><li><a href=/docs/lab_5_managing_worker_nodes-copy/>Lab 5 - Managing Worker Nodes</a></li><li><a href=/docs/lab_6_labeling_nodes/>Lab 6 - Labeling Worker Nodes</a></li><li><a href=/docs/lab_7_autoscaling/>Lab 7 - Autoscaling ROSA HCP Cluster</a></li><li><a href=/docs/lab_8_cloudwatch/>Lab 8 - Configure Red Hat OpenShift Logging with AWS Cloudwatch</a></li><li><a href=/docs/lab_9_deploy_app/ class=active>Lab 9 - Deploy an application with AWS Database</a></li><li><a href=/docs/lab_10_openshift_gitops/>Lab 10 - Deploy an application with Red Hat OpenShift GitOps</a></li><li><a href=/docs/lab_11_network_policy/>Lab 11 - Secure your applications with Network Policies</a></li><li><a href=/docs/lab_12_resilient_app/>Lab 12 - Make your application resilient</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>Lab 9 - Deploy an application with AWS Database</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#create-an-amazon-dynamodb-instance>Create an Amazon DynamoDB Instance</a></li><li><a href=#iam-roles-for-service-account-irsa-configuration>IAM Roles for Service Account (IRSA) Configuration</a></li><li><a href=#build-and-deploy-the-microsweeper-app>Build and Deploy the Microsweeper app</a></li><li><a href=#test-the-application>Test the application</a></li><li><a href=#application-ip>Application IP</a></li><li><a href=#summary>Summary</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=introduction>Introduction
 <a class=anchor href=#introduction>#</a></h2><p>It’s time for us to put our cluster to work and deploy a workload! We’re going to build an example Java application, <a href=https://github.com/redhat-mw-demos/microsweeper-quarkus/tree/ROSA>microsweeper</a>, using <a href=https://quarkus.io/>Quarkus</a> (a Kubernetes-native Java stack) and <a href=https://aws.amazon.com/dynamodb>Amazon DynamoDB</a>. We’ll then deploy the application to our ROSA cluster and connect to the database over AWS’s secure network.</p><p>This lab demonstrates how ROSA (an AWS native service) can easily and securely access and utilize other AWS native services using AWS Secure Token Service (STS). To achieve this, we will be using AWS IAM, Amazon DynamoDB, and a service account within OpenShift. After configuring the latter, we will use both Quarkus - a Kubernetes-native Java framework optimized for containers - and Source-to-Image (S2I) - a toolkit for building container images from source code - to deploy the microsweeper application.</p><h2 id=create-an-amazon-dynamodb-instance>Create an Amazon DynamoDB Instance
 <a class=anchor href=#create-an-amazon-dynamodb-instance>#</a></h2><ol><li><p>First, let’s create a project (also known as a namespace). A project is a unit of organization within OpenShift that provides isolation for applications and resources. To do so, run the following command</p><pre><code> oc new-project microsweeper-ex
@@ -54,25 +54,25 @@ This lab demonstrates how ROSA (an AWS native service) can easily and securely a
 </span></span></code></pre></div></li></ol><h2 id=iam-roles-for-service-account-irsa-configuration>IAM Roles for Service Account (IRSA) Configuration
 <a class=anchor href=#iam-roles-for-service-account-irsa-configuration>#</a></h2><p>Our application uses AWS Secure Token Service(STS) to establish connections with Amazon DynamoDB. Traditionally, one would use static IAM credentials for this purpose, but this approach goes against AWS&rsquo; recommended best practices. Instead, AWS suggests utilizing their Secure Token Service (STS). Fortunately, our ROSA cluster has already been deployed using AWS STS, making it effortless to adopt IAM Roles for Service Accounts (IRSA), also known as pod identity.</p><p>Service accounts play a crucial role in managing the permissions and access control of applications running within ROSA. They act as identities for pods and allow them to interact securely with various AWS services.</p><p>IAM roles, on the other hand, define a set of permissions that can be assumed by trusted entities within AWS. By associating an AWS IAM role with a service account, we enable the pods in our ROSA cluster to leverage the permissions defined within that role. This means that instead of relying on static IAM credentials, our application can obtain temporary security tokens from AWS STS by assuming the associated IAM role.</p><p>This approach aligns with AWS&rsquo; recommended best practices and provides several benefits. Firstly, it enhances security by reducing the risk associated with long-lived static credentials. Secondly, it simplifies the management of access controls by leveraging IAM roles, which can be centrally managed and easily updated. Finally, it enables seamless integration with AWS services, such as DynamoDB, by granting the necessary permissions to the service accounts associated with our pods.</p><ol><li><p>First, create a service account to use to assume an IAM role. To do so, run the following command</p><pre><code> oc -n microsweeper-ex create serviceaccount microsweeper
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>serviceaccount/microsweeper created
-</span></span></code></pre></div></li><li><p>Next, let’s create a trust policy document which will define what service account can assume our role. To create the trust policy document, run the following command</p><pre><code> cat &lt;&lt;EOF &gt; ${HOME}/trust-policy.json
- {
- &quot;Version&quot;: &quot;2012-10-17&quot;,
- &quot;Statement&quot;: [
-     {
-     &quot;Effect&quot;: &quot;Allow&quot;,
-     &quot;Principal&quot;: {
-         &quot;Federated&quot;: &quot;arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):oidc-provider/$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///')&quot;
-     },
-     &quot;Action&quot;: &quot;sts:AssumeRoleWithWebIdentity&quot;,
-     &quot;Condition&quot;: {
-         &quot;StringEquals&quot;: {
-         &quot;$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///'):sub&quot;: &quot;system:serviceaccount:microsweeper-ex:microsweeper&quot;
-         }
-     }
-     }
- ]
- }
- EOF
+</span></span></code></pre></div></li><li><p>Next, let’s create a trust policy document which will define what service account can assume our role. To create the trust policy document, run the following command</p><pre><code>cat &lt;&lt;EOF &gt; ${HOME}/trust-policy.json
+{
+&quot;Version&quot;: &quot;2012-10-17&quot;,
+&quot;Statement&quot;: [
+    {
+    &quot;Effect&quot;: &quot;Allow&quot;,
+    &quot;Principal&quot;: {
+        &quot;Federated&quot;: &quot;arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):oidc-provider/$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///')&quot;
+    },
+    &quot;Action&quot;: &quot;sts:AssumeRoleWithWebIdentity&quot;,
+    &quot;Condition&quot;: {
+        &quot;StringEquals&quot;: {
+        &quot;$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///'):sub&quot;: &quot;system:serviceaccount:microsweeper-ex:microsweeper&quot;
+        }
+    }
+    }
+]
+}
+EOF
 </code></pre></li><li><p>Next, let’s take the trust policy document and use it to create a role. To do so, run the following command</p><pre><code> aws iam create-role --role-name irsa-${GUID} --assume-role-policy-document file://${HOME}/trust-policy.json --description &quot;IRSA Role (${GUID}&quot;
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>    <span style=color:#75715e>{</span>
 </span></span><span style=display:flex><span>        <span style=color:#e6db74>&#34;Role&#34;</span><span style=color:#f92672>:</span> <span style=color:#75715e>{</span>
@@ -120,25 +120,25 @@ This lab demonstrates how ROSA (an AWS native service) can easily and securely a
 </code></pre></li><li><p>Next, we will add the OpenShift extension to the Quarkus CLI. To do so, run the following command</p><pre><code> quarkus ext add openshift
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>Looking for the newly published extensions in registry.quarkus.io
 </span></span><span style=display:flex><span>👍  Extension io.quarkus:quarkus-openshift was already installed
-</span></span></code></pre></div></li><li><p>Now, we’ll configure Quarkus to use the DynamoDB instance that we created earlier in this section. To do so, we’ll create an <code>application.properties</code> file using by running the following command:</p><pre><code> cat &lt;&lt;EOF &gt; ${HOME}/rosa-workshop-app/src/main/resources/application.properties
- # AWS DynamoDB configurations
- %dev.quarkus.dynamodb.endpoint-override=http://localhost:8000
- %prod.quarkus.openshift.env.vars.aws_region=$(aws configure get region)
- %prod.quarkus.dynamodb.aws.credentials.type=default
- dynamodb.table=microsweeper-scores-${GUID}
+</span></span></code></pre></div></li><li><p>Now, we’ll configure Quarkus to use the DynamoDB instance that we created earlier in this section. To do so, we’ll create an <code>application.properties</code> file using by running the following command:</p><pre><code>cat &lt;&lt;EOF &gt; ${HOME}/rosa-workshop-app/src/main/resources/application.properties
+# AWS DynamoDB configurations
+%dev.quarkus.dynamodb.endpoint-override=http://localhost:8000
+%prod.quarkus.openshift.env.vars.aws_region=$(aws configure get region)
+%prod.quarkus.dynamodb.aws.credentials.type=default
+dynamodb.table=microsweeper-scores-${GUID}
 
- # OpenShift configurations
- %prod.quarkus.kubernetes-client.trust-certs=true
- %prod.quarkus.kubernetes.deploy=true
- %prod.quarkus.kubernetes.deployment-target=openshift
- %prod.quarkus.openshift.build-strategy=docker
- %prod.quarkus.openshift.route.expose=true
- %prod.quarkus.openshift.service-account=microsweeper
+# OpenShift configurations
+%prod.quarkus.kubernetes-client.trust-certs=true
+%prod.quarkus.kubernetes.deploy=true
+%prod.quarkus.kubernetes.deployment-target=openshift
+%prod.quarkus.openshift.build-strategy=docker
+%prod.quarkus.openshift.route.expose=true
+%prod.quarkus.openshift.service-account=microsweeper
 
- # To make Quarkus use Deployment instead of DeploymentConfig
- %prod.quarkus.openshift.deployment-kind=Deployment
- %prod.quarkus.container-image.group=microsweeper-ex
- EOF
+# To make Quarkus use Deployment instead of DeploymentConfig
+%prod.quarkus.openshift.deployment-kind=Deployment
+%prod.quarkus.container-image.group=microsweeper-ex
+EOF
 </code></pre></li><li><p>Now that we’ve provided the proper configuration, we will build our application. We’ll do this using <a href=https://github.com/openshift/source-to-image>source-to-image</a>, a tool built-in to OpenShift. To start the build and deploy, run the following command:</p><pre><code> quarkus build --no-tests
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>    [...Lots of Output Omitted...]
 </span></span><span style=display:flex><span>    [INFO] Installing /home/rosa/rosa-workshop-app/target/microsweeper-appservice-1.0.0-SNAPSHOT.jar to /home/rosa/.m2/repository/org/acme/microsweeper-appservice/1.0.0-SNAPSHOT/microsweeper-appservice-1.0.0-SNAPSHOT.jar

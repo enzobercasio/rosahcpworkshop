@@ -87,25 +87,25 @@ This approach aligns with AWS' recommended best practices and provides several b
     ```
 2. Next, let’s create a trust policy document which will define what service account can assume our role. To create the trust policy document, run the following command
 
-        cat <<EOF > ${HOME}/trust-policy.json
-        {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-            "Effect": "Allow",
-            "Principal": {
-                "Federated": "arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):oidc-provider/$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///')"
-            },
-            "Action": "sts:AssumeRoleWithWebIdentity",
-            "Condition": {
-                "StringEquals": {
-                "$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///'):sub": "system:serviceaccount:microsweeper-ex:microsweeper"
-                }
-            }
-            }
-        ]
-        }
-        EOF
+       cat <<EOF > ${HOME}/trust-policy.json
+       {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+           "Effect": "Allow",
+           "Principal": {
+               "Federated": "arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):oidc-provider/$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///')"
+           },
+           "Action": "sts:AssumeRoleWithWebIdentity",
+           "Condition": {
+               "StringEquals": {
+               "$(rosa describe cluster -c rosa-${GUID} -o json | jq -r .aws.sts.oidc_endpoint_url | sed -e 's/^https:\/\///'):sub": "system:serviceaccount:microsweeper-ex:microsweeper"
+               }
+           }
+           }
+       ]
+       }
+       EOF
 
 3. Next, let’s take the trust policy document and use it to create a role. To do so, run the following command
 
@@ -195,25 +195,25 @@ Now that we’ve got a DynamoDB instance up and running and our IRSA configurati
     ```    
 6. Now, we’ll configure Quarkus to use the DynamoDB instance that we created earlier in this section. To do so, we’ll create an `application.properties` file using by running the following command:
 
-        cat <<EOF > ${HOME}/rosa-workshop-app/src/main/resources/application.properties
-        # AWS DynamoDB configurations
-        %dev.quarkus.dynamodb.endpoint-override=http://localhost:8000
-        %prod.quarkus.openshift.env.vars.aws_region=$(aws configure get region)
-        %prod.quarkus.dynamodb.aws.credentials.type=default
-        dynamodb.table=microsweeper-scores-${GUID}
+       cat <<EOF > ${HOME}/rosa-workshop-app/src/main/resources/application.properties
+       # AWS DynamoDB configurations
+       %dev.quarkus.dynamodb.endpoint-override=http://localhost:8000
+       %prod.quarkus.openshift.env.vars.aws_region=$(aws configure get region)
+       %prod.quarkus.dynamodb.aws.credentials.type=default
+       dynamodb.table=microsweeper-scores-${GUID}
 
-        # OpenShift configurations
-        %prod.quarkus.kubernetes-client.trust-certs=true
-        %prod.quarkus.kubernetes.deploy=true
-        %prod.quarkus.kubernetes.deployment-target=openshift
-        %prod.quarkus.openshift.build-strategy=docker
-        %prod.quarkus.openshift.route.expose=true
-        %prod.quarkus.openshift.service-account=microsweeper
+       # OpenShift configurations
+       %prod.quarkus.kubernetes-client.trust-certs=true
+       %prod.quarkus.kubernetes.deploy=true
+       %prod.quarkus.kubernetes.deployment-target=openshift
+       %prod.quarkus.openshift.build-strategy=docker
+       %prod.quarkus.openshift.route.expose=true
+       %prod.quarkus.openshift.service-account=microsweeper
 
-        # To make Quarkus use Deployment instead of DeploymentConfig
-        %prod.quarkus.openshift.deployment-kind=Deployment
-        %prod.quarkus.container-image.group=microsweeper-ex
-        EOF
+       # To make Quarkus use Deployment instead of DeploymentConfig
+       %prod.quarkus.openshift.deployment-kind=Deployment
+       %prod.quarkus.container-image.group=microsweeper-ex
+       EOF
 
 7. Now that we’ve provided the proper configuration, we will build our application. We’ll do this using [source-to-image](https://github.com/openshift/source-to-image), a tool built-in to OpenShift. To start the build and deploy, run the following command:
 

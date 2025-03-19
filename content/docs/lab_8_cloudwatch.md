@@ -65,28 +65,28 @@ In this section of the workshop, we’ll configure ROSA to forward logs to Amazo
 
     Sample Output
     ```tpl
-    I: Updated machine pool 'worker' on cluster 'rosa-6n4s8'
+    arn:aws:iam::588550307242:policy/RosaCloudWatch
     ```
 
 3. Next, let’s create a trust policy document which will define what service account can assume our role. To create the trust policy document, run the following command
 
-        cat <<EOF > ${HOME}/cloudwatch-trust-policy.json
-        {
-          "Version": "2012-10-17",
-          "Statement": [{
-            "Effect": "Allow",
-            "Principal": {
-            "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_ENDPOINT}"
-            },
-            "Action": "sts:AssumeRoleWithWebIdentity",
-            "Condition": {
-              "StringEquals": {
-                "${OIDC_ENDPOINT}:sub": "system:serviceaccount:openshift-logging:logcollector"
-              }
-            }
-          }]
-        }
-        EOF
+       cat <<EOF > ${HOME}/cloudwatch-trust-policy.json
+       {
+         "Version": "2012-10-17",
+         "Statement": [{
+           "Effect": "Allow",
+           "Principal": {
+           "Federated": "arn:aws:iam::${AWS_ACCOUNT_ID}:oidc-provider/${OIDC_ENDPOINT}"
+           },
+           "Action": "sts:AssumeRoleWithWebIdentity",
+           "Condition": {
+             "StringEquals": {
+               "${OIDC_ENDPOINT}:sub": "system:serviceaccount:openshift-logging:logcollector"
+             }
+           }
+         }]
+       }
+       EOF
 
 4. Next, let’s take the trust policy document and use it to create a role. To do so, run the following command
 
@@ -114,42 +114,44 @@ The CLO (Cluster Logging Operator) provides a set of APIs to control collection 
 
 1. Now, we need to deploy the OpenShift Cluster Logging Operator. We’ll need a Namespace, an OperatorGroup, and a Subscription. To do so, run the following command
 
-        cat << EOF | oc apply -f -
-        apiVersion: v1
-        kind: Namespace
-        metadata:
-          name: openshift-logging
-          annotations:
-            openshift.io/node-selector: ""
-          labels:
-            openshift.io/cluster-monitoring: "true"
-        ---
-        apiVersion: operators.coreos.com/v1
-        kind: OperatorGroup
-        metadata:
-          name: cluster-logging
-          namespace: openshift-logging
-        spec:
-          targetNamespaces:
-          - openshift-logging
-        ---
-        apiVersion: operators.coreos.com/v1alpha1
-        kind: Subscription
-        metadata:
-          labels:
-            operators.coreos.com/cluster-logging.openshift-logging: ""
-          name: cluster-logging
-          namespace: openshift-logging
-        spec:
-          channel: stable
-          installPlanApproval: Automatic
-          name: cluster-logging
-          source: redhat-operators
-          sourceNamespace: openshift-marketplace
-        EOF
+       cat << EOF | oc apply -f -
+       apiVersion: v1
+       kind: Namespace
+       metadata:
+         name: openshift-logging
+         annotations:
+           openshift.io/node-selector: ""
+         labels:
+           openshift.io/cluster-monitoring: "true"
+       ---
+       apiVersion: operators.coreos.com/v1
+       kind: OperatorGroup
+       metadata:
+         name: cluster-logging
+         namespace: openshift-logging
+       spec:
+         targetNamespaces:
+         - openshift-logging
+       ---
+       apiVersion: operators.coreos.com/v1alpha1
+       kind: Subscription
+       metadata:
+         labels:
+           operators.coreos.com/cluster-logging.openshift-logging: ""
+         name: cluster-logging
+         namespace: openshift-logging
+       spec:
+         channel: stable
+         installPlanApproval: Automatic
+         name: cluster-logging
+         source: redhat-operators
+         sourceNamespace: openshift-marketplace
+       EOF
 
     Sample Output
     ```tpl
+    namespace/openshift-logging configured
+    operatorgroup.operators.coreos.com/cluster-logging created
     subscription.operators.coreos.com/cluster-logging created
     ```
 2. Now, we will wait for the OpenShift Cluster Logging Operator to install. To do so, we can run the following command to watch the status of the installation
@@ -160,8 +162,9 @@ The CLO (Cluster Logging Operator) provides a set of APIs to control collection 
 
     After a minute or two, your output should look something like this: 
 
+      ```tpl
         deployment "cluster-logging-operator" successfully rolled out
-
+      ```
     
     
     Note: If you get an error Error from server (NotFound): deployments.apps "cluster-logging-operator" not found wait a few seconds and try again.
@@ -169,16 +172,16 @@ The CLO (Cluster Logging Operator) provides a set of APIs to control collection 
 
 3. Next, we need to create a secret containing the ARN of the IAM role that we previously created above. To do so, run the following command
 
-        cat << EOF | oc apply -f -
-        ---
-        apiVersion: v1
-        kind: Secret
-        metadata:
-        name: cloudwatch-credentials
-        namespace: openshift-logging
-        stringData:
-        role_arn: ${ROLE_ARN}
-        EOF
+       cat << EOF | oc apply -f -
+       ---
+       apiVersion: v1
+       kind: Secret
+       metadata:
+         name: cloudwatch-credentials
+         namespace: openshift-logging
+       stringData:
+         role_arn: ${ROLE_ARN}
+       EOF
 
     Sample Output
     ```tpl
@@ -186,32 +189,32 @@ The CLO (Cluster Logging Operator) provides a set of APIs to control collection 
     ```
 4. Next, let’s configure the OpenShift Cluster Logging Operator by creating a Cluster Log Forwarding custom resource that will forward logs to Amazon CloudWatch. To do so, run the following command
 
-        cat << EOF | oc apply -f -
-        ---
-        apiVersion: logging.openshift.io/v1
-        kind: ClusterLogForwarder
-        metadata:
-        name: instance
-        namespace: openshift-logging
-        spec:
-        outputs:
-        - name: cw
-            type: cloudwatch
-            cloudwatch:
-            groupBy: namespaceName
-            groupPrefix: rosa-${GUID}
-            region: $(aws configure get region)
-            secret:
-            name: cloudwatch-credentials
-        pipelines:
-        - name: to-cloudwatch
-            inputRefs:
-            - infrastructure
-            - audit
-            - application
-            outputRefs:
-            - cw
-        EOF
+       cat << EOF | oc apply -f -
+       apiVersion: "logging.openshift.io/v1"
+       kind: ClusterLogForwarder
+       metadata:
+         name: instance
+         namespace: openshift-logging
+       spec:
+         outputs:
+           - name: cw
+             type: cloudwatch
+             cloudwatch:
+               groupBy: namespaceName
+               groupPrefix: rosa-${WS_USER/_/-}
+               region: ${AWS_DEFAULT_REGION}
+             secret:
+               name: cloudwatch-credentials
+         pipelines:
+            - name: to-cloudwatch
+              inputRefs:
+                - infrastructure
+                - audit
+                - application
+              outputRefs:
+                - cw
+       EOF
+
 
     Sample Output
     ```tpl
@@ -219,21 +222,21 @@ The CLO (Cluster Logging Operator) provides a set of APIs to control collection 
     ```
 5. Next, let’s create a Cluster Logging custom resource which will enable the OpenShift Cluster Logging Operator to start collecting logs.
 
-        cat << EOF | oc apply -f -
-        ---
-        apiVersion: logging.openshift.io/v1
-        kind: ClusterLogging
-        metadata:
-        name: instance
-        namespace: openshift-logging
-        spec:
-        collection:
-            logs:
-            type: fluentd
-        forwarder:
-            fluentd: {}
-        managementState: Managed
-        EOF
+       cat << EOF | oc apply -f -
+       ---
+       apiVersion: logging.openshift.io/v1
+       kind: ClusterLogging
+       metadata:
+         name: instance
+         namespace: openshift-logging
+       spec:
+         collection:
+           logs:
+             type: fluentd
+         forwarder:
+           fluentd: {}
+       managementState: Managed
+       EOF
 
     Sample Output
     ```tpl

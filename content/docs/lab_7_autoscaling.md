@@ -35,25 +35,16 @@ You will need to set up autoscaling for each MachinePool in the cluster separate
     I: Updated machine pool 'workes' on cluster 'rosa-6n4s8'
     ```
 
-3. Next, let’s check to see that our managed machine autoscalers have been created. To do so, run the following command
+3. Next, let’s check to see if the autoscaler has been enabled.
 
-        oc -n openshift-machine-api get machineautoscaler
+        rosa list machinepools -c rosa-${GUID}
 
     Sample Output
     ```tpl
-    NAME                                 REF KIND     REF NAME                             MIN   MAX   AGE
-    rosa-6n4s8-7hbhw-worker-us-east-2a   MachineSet   rosa-6n4s8-7hbhw-worker-us-east-2a   2     4     4m30s
+    ID       AUTOSCALING  REPLICAS  INSTANCE TYPE  LABELS    TAINTS    AVAILABILITY ZONE  SUBNET                    DISK SIZE  VERSION  AUTOREPAIR  
+    workers  Yes          2/2-4     m5.xlarge                          ap-southeast-1c    subnet-028ffd45ced1aa624  300 GiB    4.15.34  Yes         
     ```
 
-4. And finally, let’s check to see that our cluster autoscaler has been created. To do so, run the following command
-
-        oc get clusterautoscaler
-
-    Sample Output
-    ```tpl
-    NAME      AGE
-    default   4m55s
-    ``` 
 
 ## Test the Autoscaler
 Now let’s test the cluster autoscaler and see it in action. To do so, we’ll deploy a job with a load that this cluster cannot handle. This should force the cluster to scale to handle the load.
@@ -77,34 +68,33 @@ Now let’s test the cluster autoscaler and see it in action. To do so, we’ll 
 
 2. Next, let’s deploy our job that will exhaust the cluster’s resources and cause it to scale more worker nodes. To do so, run the following command
 
-        cat << EOF | oc apply -f -
-        ---
-        apiVersion: batch/v1
-        kind: Job
-        metadata:
-          name: maxscale
-          namespace: autoscale-ex
-        spec:
-          template:
-            spec:
-            containers:
-            - name: work
-                image: busybox
-                command: ["sleep",  "300"]
-                resources:
-                requests:
-                    memory: 500Mi
-                    cpu: 500m
-                securityContext:
-                allowPrivilegeEscalation: false
-                capabilities:
-                    drop:
-                    - ALL
-            restartPolicy: Never
-        backoffLimit: 4
-        completions: 50
-        parallelism: 50
-        EOF
+       cat << EOF | oc create -f -
+       apiVersion: batch/v1
+       kind: Job
+       metadata:
+         generateName: maxscale
+         namespace: autoscale-ex
+       spec:
+         template:
+           spec:
+             containers:
+             - name: work
+               image: busybox
+               command: ["sleep",  "300"]
+               resources:
+                 requests:
+                   memory: 500Mi
+                   cpu: 500m
+               securityContext:
+                 allowPrivilegeEscalation: false
+                 capabilities:
+                   drop:
+                     - ALL
+             restartPolicy: Never
+         backoffLimit: 4
+         completions: 50
+         parallelism: 50
+       EOF
 
     Sample Output
     ```tpl
@@ -127,30 +117,32 @@ Now let’s test the cluster autoscaler and see it in action. To do so, we’ll 
     ```    
     Notice that we see a lot of pods in a pending state. This should trigger the cluster autoscaler to create more machines using the MachineAutoscaler we created.
 
-4. Let’s check to see if our MachineSet automatically scaled (it may take a few minutes). To do so, run the following command
+4. Let’s check to see if our MachinePool automatically scaled (it may take a few minutes). To do so, run the following command
 
-        oc -n openshift-machine-api get machinesets
+        rosa list machinepools -c rosa-${GUID}  
 
     Sample Output
     ```tpl
-    NAME                                 DESIRED   CURRENT   READY   AVAILABLE   AGE
-    rosa-6n4s8-7hbhw-infra-us-east-2a    2         2         2       2           23h
-    rosa-6n4s8-7hbhw-worker-us-east-2a   4         4         2       2           23h
+    ID       AUTOSCALING  REPLICAS  INSTANCE TYPE  LABELS    TAINTS    AVAILABILITY ZONE  SUBNET                    DISK SIZE  VERSION  AUTOREPAIR  
+    workers  Yes          4/2-4     m5.xlarge                          ap-southeast-1c    subnet-028ffd45ced1aa624  300 GiB    4.15.34  Yes         
+
     ```
 
     This shows that the cluster autoscaler is working on scaling multiple MachineSets up to 4.
 
-5. Now let’s watch the cluster autoscaler create and delete machines as necessary (it may take several minutes for machines to appear in the Running state). To do so, run the following command
+5. Now let’s watch the cluster autoscaler create and delete nodes as necessary (it may take several minutes for machines to appear in the Running state). To do so, run the following command
 
-        watch oc -n openshift-machine-api get machines -l machine.openshift.io/cluster-api-machine-role=worker
+        oc get nodes -w
 
     Sample Output
     ```tpl
-    NAME                                       PHASE         TYPE        REGION	 ZONE         AGE
-    rosa-6n4s8-7hbhw-worker-us-east-2a-vpfqr   Provisioned   m5.xlarge   us-east-2   us-east-2a   99s
-    rosa-6n4s8-7hbhw-worker-us-east-2a-wwmj7   Provisioned   m5.xlarge   us-east-2   us-east-2a   99s
-    rosa-6n4s8-7hbhw-worker-us-east-2a-xc8g2   Running	 m5.xlarge   us-east-2   us-east-2a   23h
-    rosa-6n4s8-7hbhw-worker-us-east-2a-zxm8j   Running	 m5.xlarge   us-east-2   us-east-2a   23h
+    NAME                                            STATUS   ROLES    AGE     VERSION
+    ip-10-0-0-142.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
+    ip-10-0-0-155.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
+    ip-10-0-0-40.ap-southeast-1.compute.internal    Ready    worker   6m35s   v1.28.13+2ca1a23
+    ip-10-0-0-74.ap-southeast-1.compute.internal    Ready    worker   6m25s   v1.28.13+2ca1a23
+    ip-10-0-0-155.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
+    ip-10-0-0-142.ap-southeast-1.compute.internal   Ready    worker   68m     v1.28.13+2ca1a23
     ```
 
     Tip: Watch will refresh the output of a command every second. Hit CTRL and c on your keyboard to exit the watch command when you’re ready to move on to the next part of the workshop.
@@ -175,6 +167,15 @@ Now let’s test the cluster autoscaler and see it in action. To do so, we’ll 
     [...Output omitted...]  
     ```
 Congratulations! You’ve successfully demonstrated cluster autoscaling.
+
+7. Delete the autoscaling project
+
+        oc delete project autoscale-ex
+
+    ```tpl
+    project.project.openshift.io "autoscale-ex" deleted
+    ```
+
 ## Summary
 
 Here you learned:
