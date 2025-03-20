@@ -72,6 +72,7 @@ For this module we will be applying networkpolices to the previously created 'mi
 
     This Network Policy will restrict Ingress to the Pods in the project `microsweeper-ex` to just the OpenShift Ingress Pods and only on port 8080.
 
+
        cat << EOF | oc apply -f -
        ---
        apiVersion: networking.k8s.io/v1
@@ -82,13 +83,13 @@ For this module we will be applying networkpolices to the previously created 'mi
        spec:
          ingress:
          - from:
-          - namespaceSelector:
+           - namespaceSelector:
                matchLabels:
-               network.openshift.io/policy-group: ingress
-            podSelector: {}
-               policyTypes:
+                 network.openshift.io/policy-group: ingress
+         podSelector: {}
+         policyTypes:
          - Ingress
-        EOF
+       EOF
 
     Sample Output
 
@@ -107,25 +108,26 @@ For this module we will be applying networkpolices to the previously created 'mi
 
 8. Sometimes you want your application to be accessible to other namespaces. You can allow access to just your microsweeper frontend from the networkpolicy-pod in the `networkpolicy-test` namespace like so
 
-        cat <<EOF | oc apply -f -
-        kind: NetworkPolicy
-        apiVersion: networking.k8s.io/v1
-        metadata:
-        name: allow-networkpolicy-pod-ap
-        namespace: microsweeper-ex
-        spec:
-        podSelector:
-            matchLabels:
-            app.kubernetes.io/name: microsweeper-appservice
-        ingress:
-            - from:
-            - namespaceSelector:
-                matchLabels:
-                    kubernetes.io/metadata.name: networkpolicy-test
-                podSelector:
-                matchLabels:
-                    app: networkpolicy
-        EOF
+       cat <<EOF | oc apply -f -
+       kind: NetworkPolicy
+       apiVersion: networking.k8s.io/v1
+       metadata:
+         name: allow-networkpolicy-pod-ap
+         namespace: microsweeper-ex
+       spec:
+         podSelector:
+           matchLabels:
+             app.kubernetes.io/name: microsweeper-appservice
+         ingress:
+           - from:
+             - namespaceSelector:
+                 matchLabels:
+                   kubernetes.io/metadata.name: networkpolicy-test
+               podSelector:
+                 matchLabels:
+                   app: networkpolicy
+       EOF
+
 
     Sample Output
     ```tpl
@@ -154,17 +156,17 @@ For this module we will be applying networkpolices to the previously created 'mi
         apiVersion: v1
         kind: Pod
         metadata:
-        name: new-test
-        namespace: networkpolicy-test
-        labels:
+          name: new-test
+          namespace: networkpolicy-test
+          labels:
             app: new-test
         spec:
-        securityContext:
+          securityContext:
             allowPrivilegeEscalation: false
-        containers:
+          containers:
             - name: new-test
-            image: registry.access.redhat.com/ubi9/ubi-minimal
-            command: ["sleep", "infinity"]
+              image: registry.access.redhat.com/ubi9/ubi-minimal
+              command: ["sleep", "infinity"]
         EOF
 
 11. Try to curl the microsweeper-ex pod from our new pod.

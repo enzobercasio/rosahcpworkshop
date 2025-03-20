@@ -1,62 +1,95 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Introduction on ROSA HCP Workshop</title><link>http://localhost:1313/</link><description>Recent content in Introduction on ROSA HCP Workshop</description><generator>Hugo</generator><language>en-us</language><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml"/><item><title>Explore the environment</title><link>http://localhost:1313/docs/lab_1_explore_rosa/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_1_explore_rosa/</guid><description>&lt;h2 id="the-workshop-environment-you-are-using">
- The Workshop Environment You Are Using
- &lt;a class="anchor" href="#the-workshop-environment-you-are-using">#&lt;/a>
-&lt;/h2>
-&lt;p>Your environment has already been set up and with the tools you need to work with ROSA and AWS.&lt;/p>
-&lt;p>Your workshop environment consists of several components which have been pre-configured and are ready to use. This includes an Amazon Web Services (AWS) account, and many other supporting resources.&lt;/p>
-&lt;p>ROSA is enabled on the AWS account used for this lab - and the ROSA CLI as well as AWS CLI tools are installed and configured on your bastion VM.&lt;/p></description></item><item><title>Deploy your cluster using a Hosted Control Plane</title><link>http://localhost:1313/docs/lab_2_cluster_creation_hcp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_2_cluster_creation_hcp/</guid><description>&lt;h2 id="deploy-your-cluster-using-a-hosted-control-plane">
- Deploy your cluster using a Hosted Control Plane
- &lt;a class="anchor" href="#deploy-your-cluster-using-a-hosted-control-plane">#&lt;/a>
-&lt;/h2>
-&lt;p>In this section we will deploy a ROSA cluster using Hosted Control Plane (HCP).&lt;/p>
-&lt;p>In short, with ROSA HCP you can decouple the control plane from the data plane (workers). This is a new deployment model for ROSA in which the control plane is hosted in a Red Hat owned AWS account. Therefore the control plane is no longer hosted in your AWS account thus reducing your AWS infrastructure expenses. The control plane is dedicated to each cluster and is highly available. See the documentation for more about &lt;a href="https://docs.openshift.com/container-platform/4.15/architecture/control-plane.html#hosted-control-planes-overview_control-plane">Hosted Control Planes&lt;/a>.&lt;/p></description></item><item><title>Access ROSA HCP Cluster</title><link>http://localhost:1313/docs/lab_3_access_cluster/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_3_access_cluster/</guid><description>&lt;h2 id="create-a-local-admin-user-for-cluster-access">
- Create a Local Admin User for Cluster Access
- &lt;a class="anchor" href="#create-a-local-admin-user-for-cluster-access">#&lt;/a>
-&lt;/h2>
-&lt;p>You can use built-in authentication to access your cluster immediately. This is done through the creation of a local privileged user.&lt;/p>
-&lt;p>ROSA makes this easy by providing a command to create a user, called &lt;code>cluster-admin&lt;/code>, which has powerful cluster administration capabilities.&lt;/p>
-&lt;p>For production deployments, however, the recommended approach is to use an external identity provider to access the cluster. We will take you through an example of that in a later lab.&lt;/p></description></item><item><title>Upgrade ROSA HCP Cluster</title><link>http://localhost:1313/docs/lab_4_cluster_upgrade/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_4_cluster_upgrade/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>Red Hat OpenShift Service on AWS (ROSA) provides fully-managed cluster upgrades. The ROSA Site Reliability Engineering (SRE) Team will monitor and manage all ROSA cluster upgrades. Customers get status emails from the SRE team before, during, and after the upgrade. These updates can be scheduled from the OpenShift Cluster Manager (OCM) or from the ROSA CLI.&lt;/p>
-&lt;p>During ROSA upgrades, one node is upgraded at a time. This is done to ensure customer applications are not impacted during the update, when deployed in a highly-available and fault-tolerant method.&lt;/p></description></item><item><title>Managing Worker Nodes</title><link>http://localhost:1313/docs/lab_5_managing_worker_nodes-copy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_5_managing_worker_nodes-copy/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>When deploying your ROSA cluster, you can configure many aspects of your worker nodes, but what happens when you need to change your worker nodes after they’ve already been created? These activities include scaling the number of nodes, changing the instance type, adding labels or taints, just to name a few.&lt;/p>
-&lt;p>Many of these changes are done using Machine Pools. Machine Pools ensure that a specified number of Machine replicas are running at any given time. Think of a Machine Pool as a &amp;ldquo;template&amp;rdquo; for the kinds of Machines that make up the worker nodes of your cluster. If you’d like to learn more, see the &lt;a href="https://docs.openshift.com/rosa/rosa_cluster_admin/rosa_nodes/rosa-managing-worker-nodes.html">Red Hat documentation on worker node management&lt;/a>.&lt;/p></description></item><item><title>Labeling Worker Nodes</title><link>http://localhost:1313/docs/lab_6_labeling_nodes/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_6_labeling_nodes/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>Labels are a useful way to select which nodes that an application will run on. These nodes are created by machines which are defined by the MachineSets we worked with in previous sections of this workshop. An example of this would be running a memory intensive application only on a specific node type.&lt;/p>
-&lt;p>While you can directly add a label to a node, it is not recommended because nodes can be recreated, which would cause the label to disappear. Therefore we need to label the Machine pool itself.&lt;/p></description></item><item><title>Autoscaling ROSA HCP Cluster</title><link>http://localhost:1313/docs/lab_7_autoscaling/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_7_autoscaling/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>The ROSA Cluster Autoscaler is a feature that helps automatically adjust the size of an ROSA cluster based on the current workload and resource demands. Cluster Autoscaler offers automatic and intelligent scaling of ROSA clusters, leading to efficient resource utilization, improved application performance, high availability, and simplified cluster management. By dynamically adjusting the cluster size based on workload demands, it helps organizations optimize their infrastructure costs while ensuring optimal application performance and scalability. The cluster autoscaler does not increase the cluster resources beyond the limits that you specify.&lt;/p></description></item><item><title>Configure Red Hat OpenShift Logging with AWS Cloudwatch</title><link>http://localhost:1313/docs/lab_8_cloudwatch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_8_cloudwatch/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>Red Hat OpenShift Service on AWS (ROSA) clusters store log data inside the cluster by default. Understanding metrics and logs is critical in successfully running your cluster. Included with ROSA is the OpenShift Cluster Logging Operator, which is intended to simplify log management and analysis within a ROSA cluster, offering centralized log collection, powerful search capabilities, visualization tools, and integration with other monitoring systems like &lt;a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch&lt;/a>.&lt;/p>
-&lt;p>Amazon CloudWatch is a monitoring and observability service provided by Amazon Web Services. It allows you to collect, store, analyze and visualize logs, metrics and events from various AWS resources and applications. Since ROSA is a first party AWS service, it integrates with Amazon CloudWatch and forwards its infrastructure, audit and application logs to Amazon CloudWatch.&lt;/p></description></item><item><title>Deploy an application with AWS Database</title><link>http://localhost:1313/docs/lab_9_deploy_app/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_9_deploy_app/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>It’s time for us to put our cluster to work and deploy a workload! We’re going to build an example Java application, &lt;a href="https://github.com/redhat-mw-demos/microsweeper-quarkus/tree/ROSA">microsweeper&lt;/a>, using &lt;a href="https://quarkus.io/">Quarkus&lt;/a> (a Kubernetes-native Java stack) and &lt;a href="https://aws.amazon.com/dynamodb">Amazon DynamoDB&lt;/a>. We’ll then deploy the application to our ROSA cluster and connect to the database over AWS’s secure network.&lt;/p>
-&lt;p>This lab demonstrates how ROSA (an AWS native service) can easily and securely access and utilize other AWS native services using AWS Secure Token Service (STS). To achieve this, we will be using AWS IAM, Amazon DynamoDB, and a service account within OpenShift. After configuring the latter, we will use both Quarkus - a Kubernetes-native Java framework optimized for containers - and Source-to-Image (S2I) - a toolkit for building container images from source code - to deploy the microsweeper application.&lt;/p></description></item><item><title>Deploy an application with Red Hat OpenShift GitOps</title><link>http://localhost:1313/docs/lab_10_openshift_gitops/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_10_openshift_gitops/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>Red Hat® OpenShift® GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.&lt;/p>
-&lt;p>OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.&lt;/p>
-&lt;p>There’s no single tool that converts a development pipeline to &amp;ldquo;DevOps&amp;rdquo;. By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD.&lt;/p></description></item><item><title>Secure your applications with Network Policies</title><link>http://localhost:1313/docs/lab_11_network_policy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_11_network_policy/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>NetworkPolicies are used to control and secure communication between pods within a cluster. They provide a declarative approach to define and enforce network traffic rules, allowing you to specify the desired network behavior. By using NetworkPolicies, you can enhance the overall security of your applications by isolating and segmenting different components within the cluster. These policies enable fine-grained control over network access, allowing you to define ingress and egress rules based on criteria such as IP addresses, ports, and pod selectors.&lt;/p></description></item><item><title>Make your application resilient</title><link>http://localhost:1313/docs/lab_12_resilient_app/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>http://localhost:1313/docs/lab_12_resilient_app/</guid><description>&lt;h2 id="introduction">
- Introduction
- &lt;a class="anchor" href="#introduction">#&lt;/a>
-&lt;/h2>
-&lt;p>ROSA is designed with high availability and resiliency in mind. Within ROSA there are multiple tools at your disposal to leverage this highly available and resilient architecture to ensure maximum uptime and availability for your applications. Disruptions can occur for a variety of different reasons, but with proper configuration of the application, you can eliminate application disruption.&lt;/p>
-&lt;p>Limits and Requests can be used to both allocate and restrict the amount of resources an application can use, pod disruption budgets ensure that you always have a particular number of your application pods running and the Horizontal Pod Autoscaler can automatically increase and decrease pod count as needed.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Introduction on ROSA HCP Workshop</title>
+    <link>https://example.org/</link>
+    <description>Recent content in Introduction on ROSA HCP Workshop</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Explore the environment</title>
+      <link>https://example.org/docs/lab_1_explore_rosa/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_1_explore_rosa/</guid>
+      <description>&lt;h2 id=&#34;the-workshop-environment-you-are-using&#34;&gt;The Workshop Environment You Are Using&lt;/h2&gt;&#xA;&lt;p&gt;Your environment has already been set up and with the tools you need to work with ROSA and AWS.&lt;/p&gt;&#xA;&lt;p&gt;Your workshop environment consists of several components which have been pre-configured and are ready to use. This includes an Amazon Web Services (AWS) account, and many other supporting resources.&lt;/p&gt;&#xA;&lt;p&gt;ROSA is enabled on the AWS account used for this lab - and the ROSA CLI as well as AWS CLI tools are installed and configured on your bastion VM.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Deploy your cluster using a Hosted Control Plane</title>
+      <link>https://example.org/docs/lab_2_cluster_creation_hcp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_2_cluster_creation_hcp/</guid>
+      <description>&lt;h2 id=&#34;deploy-your-cluster-using-a-hosted-control-plane&#34;&gt;Deploy your cluster using a Hosted Control Plane&lt;/h2&gt;&#xA;&lt;p&gt;In this section we will deploy a ROSA cluster using Hosted Control Plane (HCP).&lt;/p&gt;&#xA;&lt;p&gt;In short, with ROSA HCP you can decouple the control plane from the data plane (workers). This is a new deployment model for ROSA in which the control plane is hosted in a Red Hat owned AWS account. Therefore the control plane is no longer hosted in your AWS account thus reducing your AWS infrastructure expenses. The control plane is dedicated to each cluster and is highly available. See the documentation for more about &lt;a href=&#34;https://docs.openshift.com/container-platform/4.15/architecture/control-plane.html#hosted-control-planes-overview_control-plane&#34;&gt;Hosted Control Planes&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Access ROSA HCP Cluster</title>
+      <link>https://example.org/docs/lab_3_access_cluster/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_3_access_cluster/</guid>
+      <description>&lt;h2 id=&#34;create-a-local-admin-user-for-cluster-access&#34;&gt;Create a Local Admin User for Cluster Access&lt;/h2&gt;&#xA;&lt;p&gt;You can use built-in authentication to access your cluster immediately. This is done through the creation of a local privileged user.&lt;/p&gt;&#xA;&lt;p&gt;ROSA makes this easy by providing a command to create a user, called &lt;code&gt;cluster-admin&lt;/code&gt;, which has powerful cluster administration capabilities.&lt;/p&gt;&#xA;&lt;p&gt;For production deployments, however, the recommended approach is to use an external identity provider to access the cluster. We will take you through an example of that in a later lab.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Upgrade ROSA HCP Cluster</title>
+      <link>https://example.org/docs/lab_4_cluster_upgrade/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_4_cluster_upgrade/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;Red Hat OpenShift Service on AWS (ROSA) provides fully-managed cluster upgrades. The ROSA Site Reliability Engineering (SRE) Team will monitor and manage all ROSA cluster upgrades. Customers get status emails from the SRE team before, during, and after the upgrade. These updates can be scheduled from the OpenShift Cluster Manager (OCM) or from the ROSA CLI.&lt;/p&gt;&#xA;&lt;p&gt;During ROSA upgrades, one node is upgraded at a time. This is done to ensure customer applications are not impacted during the update, when deployed in a highly-available and fault-tolerant method.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Managing Worker Nodes</title>
+      <link>https://example.org/docs/lab_5_managing_worker_nodes-copy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_5_managing_worker_nodes-copy/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;When deploying your ROSA cluster, you can configure many aspects of your worker nodes, but what happens when you need to change your worker nodes after they’ve already been created? These activities include scaling the number of nodes, changing the instance type, adding labels or taints, just to name a few.&lt;/p&gt;&#xA;&lt;p&gt;Many of these changes are done using Machine Pools. Machine Pools ensure that a specified number of Machine replicas are running at any given time. Think of a Machine Pool as a &amp;ldquo;template&amp;rdquo; for the kinds of Machines that make up the worker nodes of your cluster. If you’d like to learn more, see the &lt;a href=&#34;https://docs.openshift.com/rosa/rosa_cluster_admin/rosa_nodes/rosa-managing-worker-nodes.html&#34;&gt;Red Hat documentation on worker node management&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Labeling Worker Nodes</title>
+      <link>https://example.org/docs/lab_6_labeling_nodes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_6_labeling_nodes/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;Labels are a useful way to select which nodes that an application will run on. These nodes are created by machines which are defined by the MachineSets we worked with in previous sections of this workshop. An example of this would be running a memory intensive application only on a specific node type.&lt;/p&gt;&#xA;&lt;p&gt;While you can directly add a label to a node, it is not recommended because nodes can be recreated, which would cause the label to disappear. Therefore we need to label the Machine pool itself.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Autoscaling ROSA HCP Cluster</title>
+      <link>https://example.org/docs/lab_7_autoscaling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_7_autoscaling/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;The ROSA Cluster Autoscaler is a feature that helps automatically adjust the size of an ROSA cluster based on the current workload and resource demands. Cluster Autoscaler offers automatic and intelligent scaling of ROSA clusters, leading to efficient resource utilization, improved application performance, high availability, and simplified cluster management. By dynamically adjusting the cluster size based on workload demands, it helps organizations optimize their infrastructure costs while ensuring optimal application performance and scalability. The cluster autoscaler does not increase the cluster resources beyond the limits that you specify.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Configure Red Hat OpenShift Logging with AWS Cloudwatch</title>
+      <link>https://example.org/docs/lab_8_cloudwatch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_8_cloudwatch/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;Red Hat OpenShift Service on AWS (ROSA) clusters store log data inside the cluster by default. Understanding metrics and logs is critical in successfully running your cluster. Included with ROSA is the OpenShift Cluster Logging Operator, which is intended to simplify log management and analysis within a ROSA cluster, offering centralized log collection, powerful search capabilities, visualization tools, and integration with other monitoring systems like &lt;a href=&#34;https://aws.amazon.com/cloudwatch/&#34;&gt;Amazon CloudWatch&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;p&gt;Amazon CloudWatch is a monitoring and observability service provided by Amazon Web Services. It allows you to collect, store, analyze and visualize logs, metrics and events from various AWS resources and applications. Since ROSA is a first party AWS service, it integrates with Amazon CloudWatch and forwards its infrastructure, audit and application logs to Amazon CloudWatch.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Deploy an application with AWS Database</title>
+      <link>https://example.org/docs/lab_9_deploy_app/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_9_deploy_app/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;It’s time for us to put our cluster to work and deploy a workload! We’re going to build an example Java application, &lt;a href=&#34;https://github.com/redhat-mw-demos/microsweeper-quarkus/tree/ROSA&#34;&gt;microsweeper&lt;/a&gt;, using &lt;a href=&#34;https://quarkus.io/&#34;&gt;Quarkus&lt;/a&gt; (a Kubernetes-native Java stack) and &lt;a href=&#34;https://aws.amazon.com/dynamodb&#34;&gt;Amazon DynamoDB&lt;/a&gt;. We’ll then deploy the application to our ROSA cluster and connect to the database over AWS’s secure network.&lt;/p&gt;&#xA;&lt;p&gt;This lab demonstrates how ROSA (an AWS native service) can easily and securely access and utilize other AWS native services using AWS Secure Token Service (STS). To achieve this, we will be using AWS IAM, Amazon DynamoDB, and a service account within OpenShift. After configuring the latter, we will use both Quarkus - a Kubernetes-native Java framework optimized for containers - and Source-to-Image (S2I) - a toolkit for building container images from source code - to deploy the microsweeper application.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Deploy an application with Red Hat OpenShift GitOps</title>
+      <link>https://example.org/docs/lab_10_openshift_gitops/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_10_openshift_gitops/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;Red Hat® OpenShift® GitOps is an operator that provides a workflow that integrates git repositories, continuous integration/continuous delivery (CI/CD) tools, and Kubernetes to realize faster, more secure, scalable software development, without compromising quality.&lt;/p&gt;&#xA;&lt;p&gt;OpenShift GitOps enables customers to build and integrate declarative git driven CD workflows directly into their application development platform.&lt;/p&gt;&#xA;&lt;p&gt;There’s no single tool that converts a development pipeline to &amp;ldquo;DevOps&amp;rdquo;. By implementing a GitOps framework, updates and changes are pushed through declarative code, automating infrastructure and deployment requirements, and CI/CD.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Secure your applications with Network Policies</title>
+      <link>https://example.org/docs/lab_11_network_policy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_11_network_policy/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;NetworkPolicies are used to control and secure communication between pods within a cluster. They provide a declarative approach to define and enforce network traffic rules, allowing you to specify the desired network behavior. By using NetworkPolicies, you can enhance the overall security of your applications by isolating and segmenting different components within the cluster. These policies enable fine-grained control over network access, allowing you to define ingress and egress rules based on criteria such as IP addresses, ports, and pod selectors.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Make your application resilient</title>
+      <link>https://example.org/docs/lab_12_resilient_app/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/docs/lab_12_resilient_app/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;ROSA is designed with high availability and resiliency in mind. Within ROSA there are multiple tools at your disposal to leverage this highly available and resilient architecture to ensure maximum uptime and availability for your applications. Disruptions can occur for a variety of different reasons, but with proper configuration of the application, you can eliminate application disruption.&lt;/p&gt;&#xA;&lt;p&gt;Limits and Requests can be used to both allocate and restrict the amount of resources an application can use, pod disruption budgets ensure that you always have a particular number of your application pods running and the Horizontal Pod Autoscaler can automatically increase and decrease pod count as needed.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

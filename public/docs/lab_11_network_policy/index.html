@@ -3,7 +3,7 @@
   #
 
 NetworkPolicies are used to control and secure communication between pods within a cluster. They provide a declarative approach to define and enforce network traffic rules, allowing you to specify the desired network behavior. By using NetworkPolicies, you can enhance the overall security of your applications by isolating and segmenting different components within the cluster. These policies enable fine-grained control over network access, allowing you to define ingress and egress rules based on criteria such as IP addresses, ports, and pod selectors."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="http://localhost:1313/docs/lab_11_network_policy/"><meta property="og:site_name" content="ROSA HCP Workshop"><meta property="og:title" content="Secure your applications with Network Policies"><meta property="og:description" content="Introduction # NetworkPolicies are used to control and secure communication between pods within a cluster. They provide a declarative approach to define and enforce network traffic rules, allowing you to specify the desired network behavior. By using NetworkPolicies, you can enhance the overall security of your applications by isolating and segmenting different components within the cluster. These policies enable fine-grained control over network access, allowing you to define ingress and egress rules based on criteria such as IP addresses, ports, and pod selectors."><meta property="og:locale" content="en_us"><meta property="og:type" content="article"><meta property="article:section" content="docs"><title>Lab 11 - Secure your applications with Network Policies | ROSA HCP Workshop</title>
-<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_11_network_policy/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.9d6983353c9ba2dbaa235877541d229d8bdc7cf37fb00588b3d868a0fc52cbca.js integrity="sha256-nWmDNTybotuqI1h3VB0inYvcfPN/sAWIs9hooPxSy8o=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=http://localhost:1313/docs/lab_11_network_policy/><link rel=stylesheet href=/book.min.6c8b9d2a1fc95075ed7da46ca81060b39add8fff6741ac51259f768929281e2c.css integrity="sha256-bIudKh/JUHXtfaRsqBBgs5rdj/9nQaxRJZ92iSkoHiw=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/en.search.min.ca88b67f90f2aca8c1ccdfcf37144b0397e3ad38fe5d87c9ecc7beed176c7a67.js integrity="sha256-yoi2f5DyrKjBzN/PNxRLA5fjrTj+XYfJ7Me+7Rdsemc=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><span>ROSA HCP Workshop</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><a href=/docs/lab_1_explore_rosa/>Lab 1 - Explore the environment</a></li><li><a href=/docs/lab_2_cluster_creation_hcp/>Lab 2 - Create a ROSA HCP Cluster</a></li><li><a href=/docs/lab_3_access_cluster/>Lab 3 - Access ROSA HCP Cluster</a></li><li><a href=/docs/lab_4_cluster_upgrade/>Lab 4 - Upgrade ROSA HCP Cluster</a></li><li><a href=/docs/lab_5_managing_worker_nodes-copy/>Lab 5 - Managing Worker Nodes</a></li><li><a href=/docs/lab_6_labeling_nodes/>Lab 6 - Labeling Worker Nodes</a></li><li><a href=/docs/lab_7_autoscaling/>Lab 7 - Autoscaling ROSA HCP Cluster</a></li><li><a href=/docs/lab_8_cloudwatch/>Lab 8 - Configure Red Hat OpenShift Logging with AWS Cloudwatch</a></li><li><a href=/docs/lab_9_deploy_app/>Lab 9 - Deploy an application with AWS Database</a></li><li><a href=/docs/lab_10_openshift_gitops/>Lab 10 - Deploy an application with Red Hat OpenShift GitOps</a></li><li><a href=/docs/lab_11_network_policy/ class=active>Lab 11 - Secure your applications with Network Policies</a></li><li><a href=/docs/lab_12_resilient_app/>Lab 12 - Make your application resilient</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>Lab 11 - Secure your applications with Network Policies</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#summary>Summary</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=introduction>Introduction
 <a class=anchor href=#introduction>#</a></h2><p>NetworkPolicies are used to control and secure communication between pods within a cluster. They provide a declarative approach to define and enforce network traffic rules, allowing you to specify the desired network behavior. By using NetworkPolicies, you can enhance the overall security of your applications by isolating and segmenting different components within the cluster. These policies enable fine-grained control over network access, allowing you to define ingress and egress rules based on criteria such as IP addresses, ports, and pod selectors.</p><p>For this module we will be applying networkpolices to the previously created &lsquo;microsweeper-ex&rsquo; namespace and using the &lsquo;microsweeper&rsquo; app to test these policies. In addition, we will deploy two new applications to test against the &lsquo;microsweeper&rsquo; app</p><ol><li><p>Create a new project and a new app. We will be using this pod for testing network connectivity to the microsweeper application</p><pre><code>  oc new-project networkpolicy-test
 </code></pre></li><li><p>Create a new application within this namespace</p><pre><code>cat &lt;&lt; EOF | oc apply -f -
@@ -51,35 +51,35 @@ metadata:
 spec:
   ingress:
   - from:
-   - namespaceSelector:
+    - namespaceSelector:
         matchLabels:
-        network.openshift.io/policy-group: ingress
-     podSelector: {}
-        policyTypes:
+          network.openshift.io/policy-group: ingress
+  podSelector: {}
+  policyTypes:
   - Ingress
- EOF
+EOF
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>    networkpolicy.networking.k8s.io/allow-from-openshift-ingress created
 </span></span></code></pre></div></li><li><p>Try to access microsweeper from the <code>networkpolicy-pod</code> again</p><pre><code> oc -n networkpolicy-test exec -ti pod/networkpolicy-pod -- curl $MS_IP:8080 | head
 </code></pre><p>This time it should fail to connect - it will just sit there. Hit Ctrl-C to avoid having to wait until a timeout.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>Tip: If you have your browser still open to the microsweeper app, you can refresh and see that you can still access it.
-</span></span></code></pre></div></li><li><p>Sometimes you want your application to be accessible to other namespaces. You can allow access to just your microsweeper frontend from the networkpolicy-pod in the <code>networkpolicy-test</code> namespace like so</p><pre><code> cat &lt;&lt;EOF | oc apply -f -
- kind: NetworkPolicy
- apiVersion: networking.k8s.io/v1
- metadata:
- name: allow-networkpolicy-pod-ap
- namespace: microsweeper-ex
- spec:
- podSelector:
-     matchLabels:
-     app.kubernetes.io/name: microsweeper-appservice
- ingress:
-     - from:
-     - namespaceSelector:
-         matchLabels:
-             kubernetes.io/metadata.name: networkpolicy-test
-         podSelector:
-         matchLabels:
-             app: networkpolicy
- EOF
+</span></span></code></pre></div></li><li><p>Sometimes you want your application to be accessible to other namespaces. You can allow access to just your microsweeper frontend from the networkpolicy-pod in the <code>networkpolicy-test</code> namespace like so</p><pre><code>cat &lt;&lt;EOF | oc apply -f -
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-networkpolicy-pod-ap
+  namespace: microsweeper-ex
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: microsweeper-appservice
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: networkpolicy-test
+        podSelector:
+          matchLabels:
+            app: networkpolicy
+EOF
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>networkpolicy.networking.k8s.io/allow-networkpolicy-pod-ap created
 </span></span></code></pre></div></li><li><p>Check to see if <code>networkpolicy-pod</code> can access the Pod.</p><pre><code> oc -n networkpolicy-test exec -ti pod/networkpolicy-pod -- curl $MS_IP:8080 | head
 </code></pre><p>Sample Output</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-tpl data-lang=tpl><span style=display:flex><span>    &lt;!DOCTYPE html&gt;
@@ -96,17 +96,17 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-name: new-test
-namespace: networkpolicy-test
-labels:
+  name: new-test
+  namespace: networkpolicy-test
+  labels:
     app: new-test
 spec:
-securityContext:
+  securityContext:
     allowPrivilegeEscalation: false
-containers:
+  containers:
     - name: new-test
-    image: registry.access.redhat.com/ubi9/ubi-minimal
-    command: [&quot;sleep&quot;, &quot;infinity&quot;]
+      image: registry.access.redhat.com/ubi9/ubi-minimal
+      command: [&quot;sleep&quot;, &quot;infinity&quot;]
 EOF
 </code></pre></li><li><p>Try to curl the microsweeper-ex pod from our new pod.</p><pre><code>oc -n networkpolicy-test exec -ti pod/new-test -- curl $MS_IP:8080 | head
 </code></pre><p>This will fail with a timeout again. Hit Ctrl-C to avoid waiting for a timeout.</p></li></ol><p>For information on setting default network policies for new projects you can read the OpenShift documentation on <a href=https://docs.openshift.com/container-platform/latest/networking/network_policy/default-network-policy.html>modifying the default project template</a>.</p><h2 id=summary>Summary
