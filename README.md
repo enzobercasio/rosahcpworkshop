@@ -1,22 +1,8 @@
-# To create public folder
-hugo
 
-# To serve locally
-hugo server
+# Requirements: awscli v2, hugo, jq (optional)
+export BUCKET_NAME="rosahcpworkshop"
+export AWS_REGION="ap-southeast-1"  
+export HUGO_SRC="$HOME/rosahcpworkshop" # path to your Hugo project root
 
-#s3 policy
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::rosahcpworkshop/*"
-        }
-    ]
-}
-
-#to deploy to S3 
-aws s3 cp public s3://rosahcpworkshop/ --recursive
+# To deploy
+bash s3-hugo-deploy.sh
