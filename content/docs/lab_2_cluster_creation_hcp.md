@@ -168,7 +168,7 @@ As this is the first time you are deploying ROSA in this account and have not ye
 
    Copy the AWS Billing Account and use it below during cluster creation.
 
-3. Run the following command to create the cluster
+3. Run the following command to create the cluster. Remember to change the billing account with the one you copied.
 
           rosa create cluster --cluster-name rosa-${GUID}-2 \
             --subnet-ids ${PUBLIC_SUBNET_ID},${PRIVATE_SUBNET_ID} \
