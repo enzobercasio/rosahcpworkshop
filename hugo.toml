@@ -4,3 +4,6 @@ title = 'ROSA HCP Workshop'
 [caches]
   [caches.images]
     dir = ':cacheDir/images'
+[module]
+[[module.imports]]
+path = 'github.com/alex-shpak/hugo-book'
