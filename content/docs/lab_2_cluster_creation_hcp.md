@@ -158,14 +158,25 @@ As this is the first time you are deploying ROSA in this account and have not ye
 
           rosa create account-roles --mode auto --yes
 
-2. Run the following command to create the cluster
+2. Get the billing account to use for new ROSA Cluster creation
+          
+          rosa list cluster
+
+   Copy the cluster name and use it for below command: 
+
+          rosa describe cluster -c <cluster> | grep Billing
+
+   Copy the AWS Billing Account and use it below during cluster creation.
+
+3. Run the following command to create the cluster
 
           rosa create cluster --cluster-name rosa-${GUID} \
             --subnet-ids ${PUBLIC_SUBNET_ID},${PRIVATE_SUBNET_ID} \
             --hosted-cp \
-            --version 4.15.34 \
+            --version 4.17.42 \
             --oidc-config-id $OIDC_ID \
-            --sts --mode auto --yes
+            --sts --mode auto --yes \
+            --billing-account <billing account>
 
    In about 10 minutes the control plane and API will be up, and about 5-10 minutes after, the worker nodes will be up and the cluster will be completely usable. This cluster will have a control plane across three AWS availability zones in your selected region, in a Red Hat AWS account and will also create 2 worker nodes in your AWS account.
 
