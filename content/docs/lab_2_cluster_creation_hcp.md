@@ -30,11 +30,11 @@ Run the following to check for the role and create it if it is missing.
 #### VPC
 
 1. Set a few environment variables for your networking configuration:
-
+         
          export VPC_CIDR=10.0.0.0/16
          export PUBLIC_CIDR_SUBNET=10.0.1.0/24
          export PRIVATE_CIDR_SUBNET=10.0.0.0/24
-         export CLUSTER_NAME=rosa-${GUID}
+         export CLUSTER_NAME=rosa-${GUID}-2
 
    and save them in your .bashrc
 
@@ -170,7 +170,7 @@ As this is the first time you are deploying ROSA in this account and have not ye
 
 3. Run the following command to create the cluster
 
-          rosa create cluster --cluster-name rosa-${GUID} \
+          rosa create cluster --cluster-name rosa-${GUID}-2 \
             --subnet-ids ${PUBLIC_SUBNET_ID},${PRIVATE_SUBNET_ID} \
             --hosted-cp \
             --version 4.17.42 \
@@ -185,11 +185,11 @@ As this is the first time you are deploying ROSA in this account and have not ye
 
 1. You can run the following command to check the detailed status of the cluster
 
-          rosa describe cluster --cluster rosa-${GUID}
+          rosa describe cluster --cluster rosa-${GUID}-2
 
    or, you can also watch the logs as it progresses
 
-          rosa logs install --cluster rosa-${GUID} --watch
+          rosa logs install --cluster rosa-${GUID}-2 --watch
 
 2. Once the state changes to “ready” your cluster is now installed. It may take a few more minutes for the worker nodes to come online. In total this should take about 15 minutes.
 
